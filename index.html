@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Finance Empire — Tycoon Game</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2756617521416814" crossorigin="anonymous"></script>
@@ -150,10 +150,89 @@ header h1{font-size:15px;font-weight:600;}
 .prog-cost{font-family:'DM Mono',monospace;color:var(--amber);font-size:11px;}
 .prog-earn{font-family:'DM Mono',monospace;color:var(--green);font-size:11px;min-width:70px;text-align:right;}
 
-@media(max-width:560px){
-  .stats{grid-template-columns:repeat(3,1fr);}
+/* ── Responsive / Mobile ── */
+@media(max-width:600px){
+  /* Container */
+  .container{padding:8px 10px;}
+
+  /* Header — smaller, tighter */
+  header{padding:10px 12px;}
+  header h1{font-size:14px;}
+  .btn-prestige{font-size:11px;padding:5px 10px;}
+  .btn-share{font-size:11px;padding:5px 10px;}
+
+  /* Stats — 2 columns, taller tap area */
+  .stats{grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px;}
+  .stat{padding:10px 10px;}
+  .stat-label{font-size:10px;}
+  .stat-val{font-size:18px;}
+
+  /* Prestige bar label wraps gracefully */
+  .prestige-bar-title{font-size:10px;}
+  .prestige-bar-pct{font-size:11px;}
+
+  /* Tabs — bigger tap targets */
+  .tab{padding:10px 12px;font-size:12px;}
+
+  /* Business list — make right-side buttons bigger */
+  .biz-icon{font-size:20px;margin-right:6px;}
+  .biz-name{font-size:13px;}
+  .biz-desc{font-size:11px;}
+  .biz-right{min-width:80px;}
+  .btn-sm{font-size:11px;padding:8px 10px;min-height:36px;line-height:1.2;}
+
+  /* Bulk toggle — bigger pills */
+  .bulk-toggle{padding:3px;gap:3px;margin-bottom:8px;}
+  .bulk-opt{padding:8px 4px;font-size:11px;}
+
+  /* Sign in bar — stack vertically */
+  .sign-in-bar{flex-direction:column;align-items:flex-start;gap:8px;}
+  .btn-google{width:100%;justify-content:center;}
+
+  /* Achievement grid — single column */
   .ach-grid{grid-template-columns:1fr;}
+  .ach-card{display:flex;align-items:center;gap:12px;padding:12px;}
+  .ach-icon{font-size:24px;margin-bottom:0;flex-shrink:0;}
+
+  /* How to play — single column */
   .howto-grid{grid-template-columns:1fr;}
+  .howto-hero{padding:16px 14px;}
+  .howto-hero h2{font-size:16px;}
+
+  /* Prestige table — tighter */
+  .prestige-table td{padding:5px 4px;font-size:11px;}
+
+  /* Log — shorter on mobile */
+  .log{height:60px;}
+
+  /* Ad bar — stack on very small screens */
+  .ad-top{flex-wrap:wrap;gap:4px;padding:6px 12px;}
+  .ad-bottom{flex-wrap:wrap;gap:6px;}
+
+  /* Modals — full width */
+  .daily-box{padding:20px 16px;}
+  .prestige-box{padding:20px 16px;max-width:95vw;}
+
+  /* Float numbers off on mobile (performance) */
+  .float-num{display:none;}
+
+  /* Leaderboard — tighter */
+  .lb-row{font-size:12px;}
+  .lb-val{font-size:11px;}
+}
+
+@media(max-width:380px){
+  /* Very small phones (SE etc) */
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .stat-val{font-size:15px;}
+  .bulk-opt{font-size:10px;padding:7px 2px;}
+  header h1{font-size:13px;}
+}
+
+@media(min-width:601px){
+  /* Desktop enhancements */
+  .biz-item:hover{background:rgba(255,255,255,.02);border-radius:8px;margin:0 -8px;padding:10px 8px;}
+  .btn-sm:hover:not(:disabled){transform:translateY(-1px);}
 }
 </style>
 </head>
@@ -850,7 +929,7 @@ function render(){
           <span id="bbuy-label${biz.id}">${bulkLabel}</span><br>
           <span style="font-size:9px;opacity:.8" id="bbuy-cost${biz.id}">${bulkCostFmt}</span>
         </button>
-        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="display:${owned?'block':'none'};width:100%" onclick="hireEmployeeBulk(${biz.id})" ${hireAffordBulk?'':'disabled'}>
+        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="display:${owned?'block':'none'};width:100%;margin-top:4px" onclick="hireEmployeeBulk(${biz.id})" ${hireAffordBulk?'':'disabled'}>
           <span id="bhire-label${biz.id}">${hireLabel}</span><br>
           <span style="font-size:9px" id="bhirecost${biz.id}">${hireCostFmt}</span>
         </button>
