@@ -63,6 +63,9 @@ header h1{font-size:15px;font-weight:600;}
 .btn-green:hover:not(:disabled){background:var(--green-dim);}
 .btn-prestige{background:linear-gradient(135deg,#2a1f5a,#1f3a5a);color:#a9c4ff;border-color:#3a4f8a;font-size:12px;padding:6px 14px;}
 .btn-share{background:#1a3a5a;color:var(--blue);border-color:#2a5a8a;font-size:12px;padding:6px 14px;}
+.bulk-toggle{display:flex;gap:4px;margin-bottom:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px;}
+.bulk-opt{flex:1;text-align:center;padding:5px 4px;font-size:11px;font-weight:600;border-radius:5px;cursor:pointer;color:var(--muted);transition:all .15s;user-select:none;}
+.bulk-opt.active{background:var(--green-dim);color:var(--green);}
 .log-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;}
 .log{height:80px;overflow-y:auto;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.9;scrollbar-width:thin;}
 .log-entry{border-bottom:1px solid var(--border);padding:1px 0;}
@@ -194,6 +197,13 @@ header h1{font-size:15px;font-weight:600;}
 
   <!-- GAME TAB -->
   <div id="tab-game" class="tab-content active">
+    <div class="bulk-toggle">
+      <div class="bulk-opt active" id="bulk-1" onclick="setBulk(1)">Buy 1x</div>
+      <div class="bulk-opt" id="bulk-10" onclick="setBulk(10)">Buy 10x</div>
+      <div class="bulk-opt" id="bulk-25" onclick="setBulk(25)">Buy 25x</div>
+      <div class="bulk-opt" id="bulk-100" onclick="setBulk(100)">Buy 100x</div>
+      <div class="bulk-opt" id="bulk-0" onclick="setBulk(0)">Buy Max</div>
+    </div>
     <div class="panel">
       <div class="panel-title">Your Portfolio</div>
       <div id="biz-list"></div>
@@ -556,13 +566,7 @@ function spawnFloat(el,amount){
   setTimeout(()=>f.remove(),900);
 }
 
-function buyBiz(id){
-  const biz=BUSINESSES[id],cost=getCost(biz);
-  if(state.cash<cost)return;
-  state.cash-=cost;state.owned[id]=(state.owned[id]||0)+1;
-  log('Acquired '+biz.name+' #'+state.owned[id]);
-  checkAchievements();saveLocal();render();
-}
+function buyBiz(id){buyBizBulk(id);}
 function buyUpgrade(id){
   const u=UPGRADES[id];
   if(state.upgrades[id]||state.cash<u.cost)return;
@@ -643,7 +647,9 @@ function claimDaily(){
   saveLocal();render();
 }
 
+let activeTab='game';
 function switchTab(tab){
+  activeTab=tab;
   const tabs=['game','upgrades','leaderboard','achievements','howto'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===tab));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
@@ -695,19 +701,58 @@ function renderUpgrades(){
         <div class="biz-name">${u.name} <span style="font-size:10px;color:var(--muted)">(${biz.name})</span></div>
         <div class="biz-detail">${u.desc}</div>
         <div class="biz-desc" style="margin-top:3px">Multiplies income by <span style="color:var(--green)">${u.mult}x</span></div>
-        ${!bought&&shortfall>0?`<div class="unlock-hint">Need ${fmt(shortfall)} more to unlock</div>`:''}
+        ${!bought&&shortfall>0?`<div class="unlock-hint" id="upghint${u.id}">Need ${fmt(shortfall)} more to unlock</div>`:`<div class="unlock-hint" id="upghint${u.id}" style="display:none"></div>`}
       </div>
       <div class="biz-right" style="min-width:80px">
         ${bought
           ?'<span style="color:var(--green);font-size:12px">Owned</span>'
           :`<div class="cost">${fmt(u.cost)}</div>
-           <button class="btn btn-sm ${canBuy?'btn-green':''}" onclick="buyUpgrade(${u.id})" ${!canBuy?'disabled':''}>Buy</button>`
+           <button class="btn btn-sm ${canBuy?'btn-green':''}" id="upgbtn${u.id}" onclick="buyUpgrade(${u.id})" ${!canBuy?'disabled':''}>Buy</button>`
         }
       </div>
     </div>`;
     el.appendChild(d);
   });
   if(!shown)el.innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px 0">Acquire businesses first to unlock upgrades.</div>';
+}
+
+// Bulk buy helpers
+let bulkQty=1;
+function setBulk(n){
+  bulkQty=n;
+  [1,10,25,100,0].forEach(v=>{
+    const el=document.getElementById('bulk-'+v);
+    if(el)el.classList.toggle('active',v===n);
+  });
+  render();
+}
+function bulkCost(biz,qty){
+  // If qty=0 (Max), compute how many we can afford
+  const count=qty===0?calcMax(biz):qty;
+  let total=0,owned=state.owned[biz.id]||0;
+  for(let i=0;i<count;i++) total+=Math.floor(biz.baseCost*Math.pow(1.15,owned+i));
+  return total;
+}
+function calcMax(biz){
+  let owned=state.owned[biz.id]||0,cash=state.cash,count=0;
+  while(true){
+    const c=Math.floor(biz.baseCost*Math.pow(1.15,owned+count));
+    if(cash<c)break;
+    cash-=c;count++;
+    if(count>9999)break;
+  }
+  return count;
+}
+function buyBizBulk(id){
+  const biz=BUSINESSES[id];
+  const qty=bulkQty===0?calcMax(biz):bulkQty;
+  if(qty<=0)return;
+  const total=bulkCost(biz,qty===bulkQty?qty:qty);
+  if(state.cash<total)return;
+  state.cash-=total;
+  state.owned[id]=(state.owned[id]||0)+qty;
+  log('Acquired '+qty+'x '+biz.name+' for '+fmt(total));
+  checkAchievements();saveLocal();render();
 }
 
 // Full DOM rebuild — only on buy/hire/prestige
@@ -723,6 +768,12 @@ function render(){
     const empCost=getEmpCost(biz.id);
     const pct=Math.min(100,Math.round(inc/maxIncome*100));
     const shortfall=cost-state.cash;
+    const maxQty=calcMax(biz);
+    const effectiveQty=bulkQty===0?maxQty:bulkQty;
+    const bCost=bulkCost(biz,effectiveQty);
+    const canAffordBulk=effectiveQty>0&&state.cash>=bCost;
+    const bulkLabel=bulkQty===0?`Max (${maxQty}x)`:bulkQty+'x';
+    const bulkCostFmt=effectiveQty>0?fmt(bCost):'Need more cash';
     const d=document.createElement('div');d.className='biz-item';d.id='biz-'+biz.id;
     d.innerHTML=`<div class="biz-header">
       <span class="biz-icon">${biz.icon}</span>
@@ -741,9 +792,12 @@ function render(){
           <div class="income-bar"><div class="income-fill" id="bb${biz.id}" style="width:${pct}%"></div></div>
         </div>
       </div>
-      <div class="biz-right">
-        <button class="btn btn-sm" id="bbuy${biz.id}" onclick="buyBiz(${biz.id})" ${state.cash<cost?'disabled':''}>Buy</button>
-        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="margin-top:4px;display:${owned?'block':'none'}" onclick="buyEmployee(${biz.id})" ${state.cash<empCost?'disabled':''}>Hire<br><span style="font-size:9px" id="bhirecost${biz.id}">${fmt(empCost)}</span></button>
+      <div class="biz-right" style="min-width:90px">
+        <button class="btn btn-sm" id="bbuy${biz.id}" onclick="buyBizBulk(${biz.id})" ${canAffordBulk?'':'disabled'} style="width:100%;margin-bottom:3px">
+          <span id="bbuy-label${biz.id}">${bulkLabel}</span><br>
+          <span style="font-size:9px;opacity:.8" id="bbuy-cost${biz.id}">${bulkCostFmt}</span>
+        </button>
+        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="display:${owned?'block':'none'};width:100%" onclick="buyEmployee(${biz.id})" ${state.cash<empCost?'disabled':''}>Hire<br><span style="font-size:9px" id="bhirecost${biz.id}">${fmt(empCost)}</span></button>
       </div>
     </div>`;
     bl.appendChild(d);
@@ -765,14 +819,22 @@ function updateStats(){
     const cost=getCost(biz),inc=getIncome(biz),empCost=getEmpCost(biz.id);
     const pct=Math.min(100,Math.round(inc/maxIncome*100));
     const shortfall=cost-state.cash;
+    const maxQty=calcMax(biz);
+    const effectiveQty=bulkQty===0?maxQty:bulkQty;
+    const bCost=bulkCost(biz,effectiveQty);
+    const canAffordBulk=effectiveQty>0&&state.cash>=bCost;
     const buyBtn=document.getElementById('bbuy'+biz.id);
+    const buyLabel=document.getElementById('bbuy-label'+biz.id);
+    const buyCostEl=document.getElementById('bbuy-cost'+biz.id);
     const hireBtn=document.getElementById('bhire'+biz.id);
     const hireCostEl=document.getElementById('bhirecost'+biz.id);
     const incEl=document.getElementById('bi'+biz.id);
     const incRow=document.getElementById('ir'+biz.id);
     const barEl=document.getElementById('bb'+biz.id);
     const uhEl=document.getElementById('uh'+biz.id);
-    if(buyBtn)buyBtn.disabled=state.cash<cost;
+    if(buyBtn)buyBtn.disabled=!canAffordBulk;
+    if(buyLabel)buyLabel.textContent=bulkQty===0?'Max ('+maxQty+'x)':bulkQty+'x';
+    if(buyCostEl)buyCostEl.textContent=effectiveQty>0?fmt(bCost):'Need more cash';
     if(hireBtn)hireBtn.disabled=state.cash<empCost;
     if(hireCostEl)hireCostEl.textContent=fmt(empCost);
     if(incEl)incEl.textContent='+'+fmt(inc)+'/s';
@@ -783,6 +845,20 @@ function updateStats(){
       else uhEl.style.display='none';
     }
   });
+  // Live-update upgrade buttons when that tab is active
+  if(activeTab==='upgrades'){
+    UPGRADES.forEach(u=>{
+      if(state.upgrades[u.id])return;
+      const btn=document.getElementById('upgbtn'+u.id);
+      const hint=document.getElementById('upghint'+u.id);
+      const shortfall=u.cost-state.cash;
+      if(btn){btn.disabled=state.cash<u.cost;btn.className='btn btn-sm'+(state.cash>=u.cost?' btn-green':'');}
+      if(hint){
+        if(shortfall>0){hint.textContent='Need '+fmt(shortfall)+' more to unlock';hint.style.display='';}
+        else hint.style.display='none';
+      }
+    });
+  }
 }
 
 function tick(){
