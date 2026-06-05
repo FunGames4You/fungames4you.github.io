@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Empire — Tycoon Game</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e10;
+    --surface: #1a1a1f;
+    --surface2: #232329;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --muted: #888;
+    --green: #3ecf8e;
+    --green-dim: #1a4a35;
+    --blue: #5b8dee;
+    --amber: #f0a500;
+    --red: #e25c5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  header { border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.02em; }
+  header .subtitle { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  /* Ad banner top */
+  .ad-top { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+  .ad-label { font-size: 9px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-right: 10px; }
+  .ad-text { color: var(--muted); }
+  .ad-cta { color: var(--blue); text-decoration: none; cursor: pointer; font-weight: 500; white-space: nowrap; margin-left: 12px; }
+  .ad-cta:hover { text-decoration: underline; }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 16px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .stat-val { font-size: 20px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+  .stat-val.green { color: var(--green); }
+
+  .ticker { text-align: center; font-size: 13px; color: var(--green); font-family: 'DM Mono', monospace; min-height: 22px; margin-bottom: 10px; transition: opacity 0.4s; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .panel-title { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+
+  .biz-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .biz-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .biz-left { flex: 1; }
+  .biz-name { font-size: 13px; font-weight: 500; }
+  .biz-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .biz-income { font-size: 11px; color: var(--green); margin-top: 2px; }
+  .badge { display: inline-block; font-size: 9px; background: var(--green-dim); color: var(--green); border-radius: 4px; padding: 1px 5px; margin-left: 4px; font-family: 'DM Mono', monospace; }
+  .biz-right { text-align: right; min-width: 80px; }
+  .cost { font-size: 12px; color: var(--amber); font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+  .btn { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; transition: background 0.15s; }
+  .btn:hover:not(:disabled) { background: #2e2e38; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-prestige { background: linear-gradient(135deg, #2a1f5a, #1f3a5a); color: #a9c4ff; border-color: #3a4f8a; }
+  .btn-prestige:hover { background: linear-gradient(135deg, #35276e, #263f6e); }
+
+  .log-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .log { height: 90px; overflow-y: auto; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; line-height: 1.9; }
+  .log-entry { border-bottom: 1px solid var(--border); padding: 1px 0; }
+
+  .ad-bottom { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+  .ad-bottom .ad-label { font-size: 9px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 3px; }
+  .ad-bottom .ad-text { color: var(--muted); }
+  .ad-bottom .ad-cta { color: var(--blue); text-decoration: none; cursor: pointer; font-weight: 500; white-space: nowrap; margin-left: 16px; font-size: 12px; }
+
+  @media (max-width: 520px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Business Empire</h1>
+    <div class="subtitle">idle tycoon</div>
+  </div>
+  <button class="btn btn-prestige" id="prestige-btn" onclick="prestige()" style="display:none">🏆 Prestige</button>
+</header>
+
+<!-- TOP AD SLOT: Replace with Google AdSense or Carbon Ads -->
+<div class="ad-top">
+  <div style="display:flex;align-items:center">
+    <span class="ad-label">Ad</span>
+    <span class="ad-text" id="ad-top-text">Smart financial planning for business owners — talk to an advisor today.</span>
+  </div>
+  <a class="ad-cta" id="ad-top-cta" href="#" onclick="cycleAd(event)">Learn more →</a>
+</div>
+
+<div class="container">
+  <div id="ticker" class="ticker"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Cash</div><div class="stat-val green" id="cash">$100</div></div>
+    <div class="stat"><div class="stat-label">Revenue/sec</div><div class="stat-val" id="rps">$0</div></div>
+    <div class="stat"><div class="stat-label">Day</div><div class="stat-val" id="day">1</div></div>
+    <div class="stat"><div class="stat-label">Prestige ×</div><div class="stat-val" id="prestige">0</div></div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <div class="panel-title">Businesses</div>
+      <div id="biz-list"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Upgrades</div>
+      <div id="upgrade-list"></div>
+    </div>
+  </div>
+
+  <div class="log-panel">
+    <div class="panel-title">Activity</div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <!-- BOTTOM AD SLOT: Replace with Google AdSense or Carbon Ads -->
+  <div class="ad-bottom">
+    <div>
+      <span class="ad-label">Advertisement</span>
+      <span class="ad-text" id="ad-bot-text">Life insurance solutions for entrepreneurs. Protect what you've built.</span>
+    </div>
+    <a class="ad-cta" href="#" onclick="cycleAd(event)">Get started →</a>
+  </div>
+</div>
+
+<script>
+const BUSINESSES = [
+  { id:0, name:"Lemonade Stand", baseCost:20, baseIncome:0.5, desc:"Your first hustle" },
+  { id:1, name:"Food Truck", baseCost:200, baseIncome:3, desc:"Mobile cuisine" },
+  { id:2, name:"Coffee Shop", baseCost:1200, baseIncome:15, desc:"Caffeine empire" },
+  { id:3, name:"Gym", baseCost:8000, baseIncome:80, desc:"Sweat = money" },
+  { id:4, name:"Tech Startup", baseCost:50000, baseIncome:400, desc:"Disrupt everything" },
+  { id:5, name:"Real Estate", baseCost:300000, baseIncome:2000, desc:"Passive income king" },
+];
+const UPGRADES = [
+  { id:0, name:"Better Lemons", bizId:0, cost:80, mult:2, desc:"2× lemonade income", bought:false },
+  { id:1, name:"Food Truck 2.0", bizId:1, cost:800, mult:2, desc:"2× food truck income", bought:false },
+  { id:2, name:"Loyalty Cards", bizId:2, cost:5000, mult:2, desc:"2× coffee income", bought:false },
+  { id:3, name:"Personal Trainer", bizId:3, cost:30000, mult:2, desc:"2× gym income", bought:false },
+  { id:4, name:"AI Integration", bizId:4, cost:150000, mult:3, desc:"3× startup income", bought:false },
+  { id:5, name:"Prime Locations", bizId:5, cost:800000, mult:2, desc:"2× real estate income", bought:false },
+];
+const ADS = [
+  "Smart financial planning for business owners — talk to an advisor today.",
+  "Life insurance solutions for entrepreneurs. Protect what you've built.",
+  "401(k) plans for small businesses. Ask a retirement plan expert.",
+  "Need funding? Connect with a financial advisor near you.",
+  "Retiring someday? Start your plan now.",
+];
+let adIdx = 0;
+function cycleAd(e) { e.preventDefault(); adIdx=(adIdx+1)%ADS.length; document.getElementById('ad-top-text').textContent=ADS[adIdx]; document.getElementById('ad-bot-text').textContent=ADS[(adIdx+1)%ADS.length]; }
+
+let state = { cash:100, day:1, prestige:0, owned:{}, upgrades:{}, mult:1 };
+let ticks=0, totalEarned=0;
+
+function getIncome(biz) {
+  const c=state.owned[biz.id]||0; if(!c) return 0;
+  let m=1; UPGRADES.forEach(u=>{ if(u.bizId===biz.id&&state.upgrades[u.id]) m*=u.mult; });
+  return biz.baseIncome*c*m*state.mult;
+}
+function totalRPS() { return BUSINESSES.reduce((s,b)=>s+getIncome(b),0); }
+function getCost(biz) { return Math.floor(biz.baseCost*Math.pow(1.15,state.owned[biz.id]||0)); }
+function fmt(n) {
+  if(n>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
+  return '$'+Math.floor(n);
+}
+function log(msg) {
+  const el=document.getElementById('log');
+  const d=document.createElement('div'); d.className='log-entry';
+  d.textContent='Day '+state.day+': '+msg;
+  el.insertBefore(d,el.firstChild);
+  if(el.children.length>40) el.removeChild(el.lastChild);
+}
+function buyBiz(id) {
+  const biz=BUSINESSES[id],cost=getCost(biz);
+  if(state.cash<cost) return;
+  state.cash-=cost; state.owned[id]=(state.owned[id]||0)+1;
+  log('Bought '+biz.name+' #'+state.owned[id]); render();
+}
+function buyUpgrade(id) {
+  const u=UPGRADES[id];
+  if(state.cash<u.cost||state.upgrades[id]) return;
+  state.cash-=u.cost; state.upgrades[id]=true;
+  log('Upgraded: '+u.name); render();
+}
+function prestige() {
+  if(totalEarned<1000000) return;
+  state.prestige++; state.mult=1+state.prestige*0.5;
+  state.cash=100; state.owned={}; state.upgrades={}; totalEarned=0; state.day=1;
+  log('Prestige! Income ×'+state.mult.toFixed(1)); render();
+}
+function render() {
+  document.getElementById('cash').textContent=fmt(state.cash);
+  document.getElementById('rps').textContent=fmt(totalRPS());
+  document.getElementById('day').textContent=state.day;
+  document.getElementById('prestige').textContent=state.prestige;
+  const bl=document.getElementById('biz-list'); bl.innerHTML='';
+  BUSINESSES.forEach(biz=>{
+    const owned=state.owned[biz.id]||0,cost=getCost(biz),inc=getIncome(biz);
+    const d=document.createElement('div'); d.className='biz-item';
+    d.innerHTML=`<div class="biz-left">
+      <div class="biz-name">${biz.name}${owned?'<span class="badge">×'+owned+'</span>':''}</div>
+      <div class="biz-desc">${biz.desc}</div>
+      ${inc?'<div class="biz-income">+'+fmt(inc)+'/s</div>':''}
+    </div>
+    <div class="biz-right">
+      <div class="cost">${fmt(cost)}</div>
+      <button class="btn" onclick="buyBiz(${biz.id})" ${state.cash<cost?'disabled':''}>Buy</button>
+    </div>`;
+    bl.appendChild(d);
+  });
+  const ul=document.getElementById('upgrade-list'); ul.innerHTML='';
+  let shown=0;
+  UPGRADES.forEach(u=>{
+    if(state.upgrades[u.id]||!(state.owned[u.bizId]||0)) return;
+    shown++;
+    const d=document.createElement('div'); d.className='biz-item';
+    d.innerHTML=`<div class="biz-left">
+      <div class="biz-name">${u.name}</div>
+      <div class="biz-desc">${u.desc}</div>
+    </div>
+    <div class="biz-right">
+      <div class="cost">${fmt(u.cost)}</div>
+      <button class="btn" onclick="buyUpgrade(${u.id})" ${state.cash<u.cost?'disabled':''}>Buy</button>
+    </div>`;
+    ul.appendChild(d);
+  });
+  if(!shown) ul.innerHTML='<div style="font-size:12px;color:var(--muted)">Buy businesses to unlock upgrades.</div>';
+  document.getElementById('prestige-btn').style.display=totalEarned>=1000000?'block':'none';
+}
+function tick() {
+  ticks++;
+  const earned=totalRPS()/10;
+  state.cash+=earned; totalEarned+=earned;
+  if(ticks%100===0) {
+    state.day++;
+    const t=document.getElementById('ticker');
+    if(totalRPS()>0){ t.textContent='+ '+fmt(totalRPS()*10)+' earned today'; setTimeout(()=>t.textContent='',2000); }
+  }
+  if(ticks%300===0){ adIdx=(adIdx+1)%ADS.length; document.getElementById('ad-top-text').textContent=ADS[adIdx]; document.getElementById('ad-bot-text').textContent=ADS[(adIdx+1)%ADS.length]; }
+  render();
+}
+render();
+log('Started with $100. Buy your first business!');
+setInterval(tick,100);
+</script>
+</body>
+</html>
