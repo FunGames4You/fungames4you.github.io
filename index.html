@@ -26,6 +26,14 @@ header h1{font-size:15px;font-weight:600;}
 .stat-val.green{color:var(--green);}
 .stat-val.purple{color:var(--purple);}
 .ticker{text-align:center;font-size:13px;color:var(--green);font-family:'DM Mono',monospace;min-height:20px;margin-bottom:8px;}
+.prestige-bar-wrap{margin-bottom:12px;}
+.prestige-bar-labels{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.prestige-bar-title{font-size:11px;color:var(--muted);}
+.prestige-bar-pct{font-size:11px;font-weight:600;color:var(--purple);}
+.prestige-bar-track{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;border:1px solid var(--border);}
+.prestige-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),#c4b5fd);border-radius:99px;transition:width .4s ease;min-width:2px;}
+.prestige-bar-ready{animation:glow-pulse 1s ease-in-out infinite;}
+@keyframes glow-pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
 .tabs{display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;user-select:none;}
@@ -187,6 +195,16 @@ header h1{font-size:15px;font-weight:600;}
     <div class="stat"><div class="stat-label">Prestige</div><div class="stat-val purple" id="prestige-stat">0 (1x)</div></div>
   </div>
 
+  <div class="prestige-bar-wrap">
+    <div class="prestige-bar-labels">
+      <span class="prestige-bar-title" id="pbar-label">Prestige progress — P0 → P1</span>
+      <span class="prestige-bar-pct" id="pbar-pct">0%</span>
+    </div>
+    <div class="prestige-bar-track">
+      <div class="prestige-bar-fill" id="pbar-fill" style="width:0%"></div>
+    </div>
+  </div>
+
   <div class="tabs">
     <div class="tab active" onclick="switchTab('game')">Game</div>
     <div class="tab" onclick="switchTab('upgrades')">Upgrades</div>
@@ -324,13 +342,13 @@ header h1{font-size:15px;font-weight:600;}
       <p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:6px;">The Prestige button lights up in the header when your <strong style="color:var(--text)">Net Worth</strong> (the stat bar, 3rd tile) reaches the threshold for your current level. Net Worth is your all-time total earnings — not your current cash.</p>
 <p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;">When you prestige, your cash and firms reset to zero — but you earn a permanent income multiplier that doubles with every prestige. Each run gets faster than the last.</p>
       <table class="prestige-table">
-        <tr style="font-size:10px;color:var(--muted)"><td>Level</td><td>Multiplier</td><td>Button lights up when Net Worth reaches</td><td>Next cost</td></tr>
-        <tr><td class="pt-level">Current (P0)</td><td class="pt-mult">1x</td><td class="pt-cost">$1,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">unlock now</td></tr>
-        <tr><td class="pt-level">After P1</td><td class="pt-mult">2x</td><td class="pt-cost">$5,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
-        <tr><td class="pt-level">After P2</td><td class="pt-mult">4x</td><td class="pt-cost">$25,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
-        <tr><td class="pt-level">After P3</td><td class="pt-mult">8x</td><td class="pt-cost">$125,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
-        <tr><td class="pt-level">After P4</td><td class="pt-mult">16x</td><td class="pt-cost">$625,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
-        <tr><td class="pt-level">After P5</td><td class="pt-mult">32x</td><td class="pt-cost">$3,125,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
+        <tr style="font-size:10px;color:var(--muted)"><td>Level</td><td>Multiplier</td><td>Button lights up when Net Worth reaches</td><td></td></tr>
+        <tr><td class="pt-level">P0 → P1</td><td class="pt-mult">→ 2x</td><td class="pt-cost">$50,000,000</td><td style="color:var(--muted);font-size:10px">~2 hrs first run</td></tr>
+        <tr><td class="pt-level">P1 → P2</td><td class="pt-mult">→ 4x</td><td class="pt-cost">$1,000,000,000</td><td style="color:var(--muted);font-size:10px">~2 hrs with 2x</td></tr>
+        <tr><td class="pt-level">P2 → P3</td><td class="pt-mult">→ 8x</td><td class="pt-cost">$20,000,000,000</td><td style="color:var(--muted);font-size:10px">~2 hrs with 4x</td></tr>
+        <tr><td class="pt-level">P3 → P4</td><td class="pt-mult">→ 16x</td><td class="pt-cost">$400,000,000,000</td><td style="color:var(--muted);font-size:10px">~2 hrs with 8x</td></tr>
+        <tr><td class="pt-level">P4 → P5</td><td class="pt-mult">→ 32x</td><td class="pt-cost">$8,000,000,000,000</td><td style="color:var(--muted);font-size:10px">~2 hrs with 16x</td></tr>
+        <tr><td class="pt-level">P5+</td><td class="pt-mult">64x+</td><td class="pt-cost">$160,000,000,000,000+</td><td style="color:var(--muted);font-size:10px">for the dedicated</td></tr>
       </table>
     </div>
 
@@ -468,7 +486,7 @@ const ADS=[
   "Retiring someday? Start your plan now. 267-798-9535",
 ];
 
-function prestigeCost(p){return 1000000*Math.pow(5,p);}
+function prestigeCost(p){return 50000000*Math.pow(20,p);}
 function prestigeMult(p){return Math.pow(2,p);}
 
 let adIdx=0;
@@ -852,6 +870,21 @@ function updateStats(){
   document.getElementById('prestige-stat').textContent=state.prestige+' ('+prestigeMult(state.prestige)+'x)';
   const pb=document.getElementById('prestige-btn');
   pb.style.display=state.totalEarned>=pCost?'flex':'none';
+  // Progress bar
+  const pbarFill=document.getElementById('pbar-fill');
+  const pbarPct=document.getElementById('pbar-pct');
+  const pbarLabel=document.getElementById('pbar-label');
+  if(pbarFill&&pbarPct&&pbarLabel){
+    const rawPct=Math.min(100,(state.totalEarned/pCost)*100);
+    const dispPct=rawPct>=100?100:rawPct;
+    pbarFill.style.width=dispPct.toFixed(1)+'%';
+    pbarPct.textContent=dispPct>=100?'Ready!':dispPct.toFixed(1)+'%';
+    pbarLabel.textContent=dispPct>=100
+      ?'🏆 Prestige ready! Click the button to reset and earn '+ prestigeMult(state.prestige+1)+'x income'
+      :'Prestige P'+state.prestige+' → P'+(state.prestige+1)+' · '+fmt(state.totalEarned)+' / '+fmt(pCost)+' net worth';
+    if(dispPct>=100){pbarFill.classList.add('prestige-bar-ready');pbarPct.style.color='var(--amber)';}
+    else{pbarFill.classList.remove('prestige-bar-ready');pbarPct.style.color='var(--purple)';}
+  }
   const maxIncome=Math.max(1,...BUSINESSES.map(b=>getIncome(b)));
   BUSINESSES.forEach(biz=>{
     const cost=getCost(biz),inc=getIncome(biz),empCost=getEmpCost(biz.id);
