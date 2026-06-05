@@ -2,256 +2,824 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business Empire — Tycoon Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Finance Empire — Tycoon Game</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2756617521416814" crossorigin="anonymous"></script>
 <style>
-  :root {
-    --bg: #0e0e10;
-    --surface: #1a1a1f;
-    --surface2: #232329;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f0f0;
-    --muted: #888;
-    --green: #3ecf8e;
-    --green-dim: #1a4a35;
-    --blue: #5b8dee;
-    --amber: #f0a500;
-    --red: #e25c5c;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
-  header { border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
-  header h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.02em; }
-  header .subtitle { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0e0e10;--surface:#1a1a1f;--surface2:#232329;--border:rgba(255,255,255,0.08);--text:#f0f0f0;--muted:#888;--green:#3ecf8e;--green-dim:#1a4a35;--blue:#5b8dee;--amber:#f0a500;--red:#e25c5c;--purple:#a78bfa;}
+html,body{height:100%;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+header{border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:100;}
+header h1{font-size:15px;font-weight:600;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.ad-top{background:var(--surface);border-bottom:1px solid var(--border);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+.ad-label{font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-right:8px;}
+.ad-text{color:var(--muted);font-size:12px;}
+.ad-cta{color:var(--blue);cursor:pointer;font-weight:500;white-space:nowrap;margin-left:10px;font-size:12px;text-decoration:none;}
+.container{max-width:780px;margin:0 auto;padding:12px 14px;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+.stat-label{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.stat-val{font-size:16px;font-weight:600;font-family:'DM Mono',monospace;}
+.stat-val.green{color:var(--green);}
+.stat-val.purple{color:var(--purple);}
+.ticker{text-align:center;font-size:13px;color:var(--green);font-family:'DM Mono',monospace;min-height:20px;margin-bottom:8px;}
+.tabs{display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;user-select:none;}
+.tab.active{color:var(--text);border-bottom-color:var(--green);}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;}
+.panel-title{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.biz-item{padding:10px 0;border-bottom:1px solid var(--border);}
+.biz-item:last-child{border-bottom:none;padding-bottom:0;}
+.biz-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.biz-icon{font-size:22px;margin-right:8px;flex-shrink:0;}
+.biz-meta{flex:1;min-width:0;}
+.biz-name{font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.badge{font-size:9px;background:var(--green-dim);color:var(--green);border-radius:4px;padding:1px 5px;font-family:'DM Mono',monospace;}
+.badge-upg{font-size:9px;background:#1f1a3a;color:var(--purple);border-radius:4px;padding:1px 5px;font-family:'DM Mono',monospace;}
+.badge-emp{font-size:9px;background:#1a2a3a;color:var(--blue);border-radius:4px;padding:1px 5px;font-family:'DM Mono',monospace;}
+.biz-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.biz-detail{font-size:11px;color:var(--text);margin-top:3px;line-height:1.5;}
+.unlock-hint{font-size:10px;color:var(--amber);margin-top:4px;font-style:italic;}
+.biz-income-row{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.biz-income{font-size:11px;color:var(--green);}
+.income-bar{flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;max-width:80px;}
+.income-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s;}
+.float-num{position:fixed;pointer-events:none;font-size:12px;font-weight:600;color:var(--green);font-family:'DM Mono',monospace;z-index:999;animation:floatUp .9s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-40px);}}
+.biz-right{text-align:right;flex-shrink:0;min-width:72px;}
+.cost{font-size:12px;color:var(--amber);font-family:'DM Mono',monospace;margin-bottom:4px;}
+.need-more{font-size:10px;color:var(--red);font-family:'DM Mono',monospace;margin-bottom:4px;}
+.btn{font-size:11px;font-weight:500;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;transition:background .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn:hover:not(:disabled){background:#2e2e38;}
+.btn:active:not(:disabled){transform:scale(.97);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-sm{font-size:10px;padding:4px 8px;}
+.btn-green{border-color:var(--green-dim);color:var(--green);}
+.btn-green:hover:not(:disabled){background:var(--green-dim);}
+.btn-prestige{background:linear-gradient(135deg,#2a1f5a,#1f3a5a);color:#a9c4ff;border-color:#3a4f8a;font-size:12px;padding:6px 14px;}
+.btn-share{background:#1a3a5a;color:var(--blue);border-color:#2a5a8a;font-size:12px;padding:6px 14px;}
+.log-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;}
+.log{height:80px;overflow-y:auto;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.9;scrollbar-width:thin;}
+.log-entry{border-bottom:1px solid var(--border);padding:1px 0;}
+.ad-bottom{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:10px;}
+.event-banner{background:#1a2a1a;border:1px solid #2a5a2a;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:var(--green);display:none;animation:pulse 1s ease-in-out 3;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.achievement-toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--amber);border-radius:10px;padding:12px 16px;font-size:13px;z-index:999;animation:slideIn .3s ease-out;max-width:260px;}
+@keyframes slideIn{from{transform:translateX(120%);}to{transform:translateX(0);}}
+.achievement-title{color:var(--amber);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;}
+.lb-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-family:'DM Mono',monospace;color:var(--muted);width:28px;font-size:12px;}
+.lb-rank.gold{color:var(--amber);}
+.lb-name{flex:1;margin:0 8px;}
+.lb-val{font-family:'DM Mono',monospace;color:var(--green);font-size:12px;}
+.lb-you{background:var(--green-dim);border-radius:6px;padding:2px 6px;}
+.ach-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.ach-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;opacity:.4;transition:opacity .3s;}
+.ach-card.unlocked{opacity:1;border-color:var(--amber);}
+.ach-icon{font-size:22px;margin-bottom:6px;}
+.ach-name{font-size:12px;font-weight:600;margin-bottom:2px;}
+.ach-desc{font-size:11px;color:var(--muted);}
+.sign-in-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.sign-in-text{font-size:13px;color:var(--muted);}
+.btn-google{display:flex;align-items:center;gap:8px;background:#fff;color:#333;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.btn-google:hover{background:#f0f0f0;}
+.market-badge{display:inline-block;font-size:10px;background:#1a3a1a;color:var(--green);border-radius:4px;padding:1px 6px;margin-left:4px;font-family:'DM Mono',monospace;}
+.market-badge.bad{background:#3a1a1a;color:var(--red);}
+.daily-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;}
+.daily-box{background:var(--surface);border:1px solid var(--amber);border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%;}
+.daily-box h2{font-size:20px;margin-bottom:8px;}
+.daily-box p{font-size:13px;color:var(--muted);margin-bottom:16px;}
+.daily-reward{font-size:28px;font-weight:700;color:var(--amber);font-family:'DM Mono',monospace;margin-bottom:16px;}
+.prestige-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;}
+.prestige-box{background:var(--surface);border:1px solid #3a4f8a;border-radius:16px;padding:28px;text-align:center;max-width:340px;width:90%;}
+.prestige-box h2{font-size:20px;margin-bottom:8px;color:#a9c4ff;}
+.prestige-box p{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6;}
+.prestige-reward{font-size:22px;font-weight:700;color:var(--purple);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.prestige-warn{font-size:11px;color:var(--muted);margin-bottom:16px;}
+.prestige-row{display:flex;gap:10px;justify-content:center;}
+.prestige-tier{display:inline-block;font-size:10px;background:#2a1f5a;color:var(--purple);border-radius:4px;padding:2px 7px;font-family:'DM Mono',monospace;margin-left:4px;}
 
-  /* Ad banner top */
-  .ad-top { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
-  .ad-label { font-size: 9px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-right: 10px; }
-  .ad-text { color: var(--muted); }
-  .ad-cta { color: var(--blue); text-decoration: none; cursor: pointer; font-weight: 500; white-space: nowrap; margin-left: 12px; }
-  .ad-cta:hover { text-decoration: underline; }
+/* ── How to Play ── */
+.howto-hero{background:linear-gradient(135deg,#1a1f35,#0e1520);border:1px solid rgba(91,141,238,.25);border-radius:14px;padding:22px 20px;margin-bottom:14px;text-align:center;}
+.howto-hero h2{font-size:18px;font-weight:600;margin-bottom:6px;}
+.howto-hero p{font-size:13px;color:var(--muted);line-height:1.6;max-width:480px;margin:0 auto;}
+.howto-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.howto-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.howto-card-icon{font-size:26px;margin-bottom:8px;}
+.howto-card h3{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
+.howto-card p{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:0;}
+.ex-box{background:var(--surface2);border-radius:10px;padding:10px 12px;margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.ex-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;}
+.ex-label{color:var(--muted);flex:1;}
+.ex-val{font-weight:600;font-size:12px;white-space:nowrap;}
+.ex-val.g{color:var(--green);}
+.ex-val.a{color:var(--amber);}
+.ex-val.r{color:var(--red);}
+.ex-val.p{color:var(--purple);}
+.ex-divider{border:none;border-top:1px solid var(--border);margin:2px 0;}
+.ex-note{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;}
+.prestige-table{width:100%;border-collapse:collapse;margin-top:8px;}
+.prestige-table td{padding:6px 8px;font-size:12px;border-bottom:1px solid var(--border);}
+.prestige-table tr:last-child td{border-bottom:none;}
+.prestige-table .pt-level{color:var(--purple);font-weight:600;}
+.prestige-table .pt-mult{color:var(--green);font-weight:600;}
+.prestige-table .pt-cost{color:var(--amber);}
+.howto-progression{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;}
+.howto-progression h3{font-size:13px;font-weight:600;margin-bottom:12px;}
+.prog-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.prog-row:last-child{border-bottom:none;}
+.prog-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
+.prog-name{flex:1;font-weight:500;}
+.prog-cost{font-family:'DM Mono',monospace;color:var(--amber);font-size:11px;}
+.prog-earn{font-family:'DM Mono',monospace;color:var(--green);font-size:11px;min-width:70px;text-align:right;}
 
-  .container { max-width: 760px; margin: 0 auto; padding: 16px; }
-
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-  .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .stat-val { font-size: 20px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
-  .stat-val.green { color: var(--green); }
-
-  .ticker { text-align: center; font-size: 13px; color: var(--green); font-family: 'DM Mono', monospace; min-height: 22px; margin-bottom: 10px; transition: opacity 0.4s; }
-
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-  .panel-title { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-
-  .biz-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .biz-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .biz-left { flex: 1; }
-  .biz-name { font-size: 13px; font-weight: 500; }
-  .biz-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
-  .biz-income { font-size: 11px; color: var(--green); margin-top: 2px; }
-  .badge { display: inline-block; font-size: 9px; background: var(--green-dim); color: var(--green); border-radius: 4px; padding: 1px 5px; margin-left: 4px; font-family: 'DM Mono', monospace; }
-  .biz-right { text-align: right; min-width: 80px; }
-  .cost { font-size: 12px; color: var(--amber); font-family: 'DM Mono', monospace; margin-bottom: 4px; }
-  .btn { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; transition: background 0.15s; }
-  .btn:hover:not(:disabled) { background: #2e2e38; }
-  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-  .btn-prestige { background: linear-gradient(135deg, #2a1f5a, #1f3a5a); color: #a9c4ff; border-color: #3a4f8a; }
-  .btn-prestige:hover { background: linear-gradient(135deg, #35276e, #263f6e); }
-
-  .log-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-  .log { height: 90px; overflow-y: auto; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; line-height: 1.9; }
-  .log-entry { border-bottom: 1px solid var(--border); padding: 1px 0; }
-
-  .ad-bottom { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
-  .ad-bottom .ad-label { font-size: 9px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 3px; }
-  .ad-bottom .ad-text { color: var(--muted); }
-  .ad-bottom .ad-cta { color: var(--blue); text-decoration: none; cursor: pointer; font-weight: 500; white-space: nowrap; margin-left: 16px; font-size: 12px; }
-
-  @media (max-width: 520px) {
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .cols { grid-template-columns: 1fr; }
-  }
+@media(max-width:560px){
+  .stats{grid-template-columns:repeat(3,1fr);}
+  .ach-grid{grid-template-columns:1fr;}
+  .howto-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>Business Empire</h1>
-    <div class="subtitle">idle tycoon</div>
+  <h1>💹 Finance Empire</h1>
+  <div class="header-right">
+    <button class="btn btn-share" onclick="shareGame()">Share ↗</button>
+    <button class="btn btn-prestige" id="prestige-btn" onclick="openPrestige()" style="display:none">🏆 Prestige</button>
   </div>
-  <button class="btn btn-prestige" id="prestige-btn" onclick="prestige()" style="display:none">🏆 Prestige</button>
 </header>
 
-<!-- TOP AD SLOT: Replace with Google AdSense or Carbon Ads -->
 <div class="ad-top">
   <div style="display:flex;align-items:center">
     <span class="ad-label">Ad</span>
     <span class="ad-text" id="ad-top-text">Smart financial planning for business owners — talk to an advisor today.</span>
   </div>
-  <a class="ad-cta" id="ad-top-cta" href="#" onclick="cycleAd(event)">Learn more →</a>
+  <a class="ad-cta" href="#" onclick="cycleAd(event)">Learn more →</a>
 </div>
 
 <div class="container">
+  <div id="sign-in-bar" class="sign-in-bar">
+    <span class="sign-in-text">Sign in to save progress and appear on the leaderboard</span>
+    <button class="btn-google" onclick="signIn()">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.7 0 6.7 5.5 2.7 13.5l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.5 28.5c-.5-1.5-.8-3.1-.8-4.8s.3-3.3.8-4.8l-7.8-6C1 16.1 0 19.9 0 24s1 7.9 2.7 11.1l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.2-7.6 2.2-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.7 42.5 14.7 48 24 48z"/></svg>
+      Sign in with Google
+    </button>
+  </div>
+
+  <div id="event-banner" class="event-banner"></div>
   <div id="ticker" class="ticker"></div>
+
   <div class="stats">
     <div class="stat"><div class="stat-label">Cash</div><div class="stat-val green" id="cash">$100</div></div>
     <div class="stat"><div class="stat-label">Revenue/sec</div><div class="stat-val" id="rps">$0</div></div>
+    <div class="stat"><div class="stat-label">Net Worth</div><div class="stat-val" id="networth">$0</div></div>
     <div class="stat"><div class="stat-label">Day</div><div class="stat-val" id="day">1</div></div>
-    <div class="stat"><div class="stat-label">Prestige ×</div><div class="stat-val" id="prestige">0</div></div>
+    <div class="stat"><div class="stat-label">Prestige</div><div class="stat-val purple" id="prestige-stat">0 (1x)</div></div>
   </div>
 
-  <div class="cols">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('game')">Game</div>
+    <div class="tab" onclick="switchTab('upgrades')">Upgrades</div>
+    <div class="tab" onclick="switchTab('leaderboard')">Leaderboard</div>
+    <div class="tab" onclick="switchTab('achievements')">Achievements</div>
+    <div class="tab" onclick="switchTab('howto')">How to Play</div>
+  </div>
+
+  <!-- GAME TAB -->
+  <div id="tab-game" class="tab-content active">
     <div class="panel">
-      <div class="panel-title">Businesses</div>
+      <div class="panel-title">Your Portfolio</div>
       <div id="biz-list"></div>
     </div>
-    <div class="panel">
-      <div class="panel-title">Upgrades</div>
-      <div id="upgrade-list"></div>
+    <div class="log-panel">
+      <div class="panel-title">Activity Log</div>
+      <div class="log" id="log"></div>
     </div>
   </div>
 
-  <div class="log-panel">
-    <div class="panel-title">Activity</div>
-    <div class="log" id="log"></div>
+  <!-- UPGRADES TAB -->
+  <div id="tab-upgrades" class="tab-content">
+    <div class="panel">
+      <div class="panel-title">Available Upgrades</div>
+      <div id="upgrade-list-full"></div>
+    </div>
   </div>
 
-  <!-- BOTTOM AD SLOT: Replace with Google AdSense or Carbon Ads -->
+  <!-- LEADERBOARD TAB -->
+  <div id="tab-leaderboard" class="tab-content">
+    <div class="panel">
+      <div class="panel-title">Top Empires — Net Worth</div>
+      <div id="lb-list"></div>
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENTS TAB -->
+  <div id="tab-achievements" class="tab-content">
+    <div class="ach-grid" id="ach-grid"></div>
+  </div>
+
+  <!-- HOW TO PLAY TAB -->
+  <div id="tab-howto" class="tab-content">
+
+    <div class="howto-hero">
+      <h2>How to Build Your Finance Empire</h2>
+      <p>Start with $100 and a small tax prep office. Buy businesses, stack upgrades, hire staff, and prestige for permanent multipliers. The goal: reach the top of the leaderboard.</p>
+    </div>
+
+    <div class="howto-grid">
+
+      <div class="howto-card">
+        <div class="howto-card-icon">🏁</div>
+        <h3>Getting Started</h3>
+        <p>Businesses earn cash automatically every second. Buy one, watch the money come in, then reinvest. That's the whole loop.</p>
+        <div class="ex-box">
+          <div class="ex-row"><span class="ex-label">You start with</span><span class="ex-val a">$100</span></div>
+          <div class="ex-row"><span class="ex-label">Buy a Tax Prep Office</span><span class="ex-val a">-$20</span></div>
+          <div class="ex-row"><span class="ex-label">It earns passively</span><span class="ex-val g">+$0.50/sec</span></div>
+          <hr class="ex-divider">
+          <div class="ex-row"><span class="ex-label">After 60 seconds</span><span class="ex-val g">+$30 profit</span></div>
+        </div>
+      </div>
+
+      <div class="howto-card">
+        <div class="howto-card-icon">📈</div>
+        <h3>Stack the Same Business</h3>
+        <p>Buy the same firm multiple times — each copy adds more income. Cost rises 15% per purchase, so buy early.</p>
+        <div class="ex-box">
+          <div class="ex-row"><span class="ex-label">Office #1</span><span class="ex-val a">$20</span><span class="ex-val g">$0.50/s</span></div>
+          <div class="ex-row"><span class="ex-label">Office #2</span><span class="ex-val a">$23</span><span class="ex-val g">$1.00/s</span></div>
+          <div class="ex-row"><span class="ex-label">Office #5</span><span class="ex-val a">$35</span><span class="ex-val g">$2.50/s</span></div>
+        </div>
+      </div>
+
+      <div class="howto-card">
+        <div class="howto-card-icon">⚡</div>
+        <h3>Upgrades</h3>
+        <p>Own a business? Check the Upgrades tab. Each upgrade multiplies that firm's income permanently — and applies to all copies you own.</p>
+        <div class="ex-box">
+          <div class="ex-row"><span class="ex-label">3 offices, no upgrades</span><span class="ex-val g">$1.50/s</span></div>
+          <div class="ex-row"><span class="ex-label">+ E-Filing Software (2x)</span><span class="ex-val g">$3.00/s</span></div>
+          <div class="ex-row"><span class="ex-label">+ CPA Network (3x)</span><span class="ex-val g">$9.00/s</span></div>
+        </div>
+      </div>
+
+      <div class="howto-card">
+        <div class="howto-card-icon">👤</div>
+        <h3>Hire Staff</h3>
+        <p>After buying a firm, a Hire button appears. Each hire adds +10% income to that firm permanently. Stack 10 hires and it earns double.</p>
+        <div class="ex-box">
+          <div class="ex-row"><span class="ex-label">Brokerage, no staff</span><span class="ex-val g">$80/s</span></div>
+          <div class="ex-row"><span class="ex-label">5 hires (+50%)</span><span class="ex-val g">$120/s</span></div>
+          <div class="ex-row"><span class="ex-label">10 hires (+100%)</span><span class="ex-val g">$160/s</span></div>
+        </div>
+      </div>
+
+      <div class="howto-card">
+        <div class="howto-card-icon">🔒</div>
+        <h3>Locked Purchases</h3>
+        <p>If a Buy or Hire button is grayed out, you can't afford it yet. A note under the button tells you exactly how much more you need.</p>
+        <div class="ex-box">
+          <div class="ex-row"><span class="ex-label">Hedge Fund costs</span><span class="ex-val a">$150K</span></div>
+          <div class="ex-row"><span class="ex-label">You have</span><span class="ex-val g">$80K</span></div>
+          <hr class="ex-divider">
+          <div class="ex-row"><span class="ex-label">Still need</span><span class="ex-val r">$70K more</span></div>
+          <div class="ex-note">Keep earning — it unlocks automatically.</div>
+        </div>
+      </div>
+
+      <div class="howto-card">
+        <div class="howto-card-icon">🌪️</div>
+        <h3>Market Events</h3>
+        <p>Random events fire every few minutes. Booms multiply your income for a short window. Act fast — buy something during the surge.</p>
+        <div class="ex-box">
+          <div class="ex-row"><span class="ex-label">Normal income</span><span class="ex-val g">$500/s</span></div>
+          <div class="ex-row"><span class="ex-label">Bull run (4x, 20s)</span><span class="ex-val g">$2,000/s</span></div>
+          <hr class="ex-divider">
+          <div class="ex-row"><span class="ex-label">Free money during event</span><span class="ex-val g">+$30,000</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="howto-card" style="margin-bottom:10px;">
+      <div class="howto-card-icon">🏆</div>
+      <h3>Prestige — The Reset That Compounds</h3>
+      <p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;">When the Prestige button lights up in the header, you can reset your empire for a permanent income multiplier. Every prestige doubles your earnings — and each one costs 5x more to unlock. The further you go, the faster each new run becomes.</p>
+      <table class="prestige-table">
+        <tr><td class="pt-level">Prestige 0</td><td>Normal income</td><td class="pt-cost">Need $1M earned</td><td class="pt-mult">1x</td></tr>
+        <tr><td class="pt-level">Prestige 1</td><td>Double income</td><td class="pt-cost">Need $5M earned</td><td class="pt-mult">2x</td></tr>
+        <tr><td class="pt-level">Prestige 2</td><td>Quadruple income</td><td class="pt-cost">Need $25M earned</td><td class="pt-mult">4x</td></tr>
+        <tr><td class="pt-level">Prestige 3</td><td>8x income</td><td class="pt-cost">Need $125M earned</td><td class="pt-mult">8x</td></tr>
+        <tr><td class="pt-level">Prestige 5</td><td>32x income</td><td class="pt-cost">Need $3.1B earned</td><td class="pt-mult">32x</td></tr>
+      </table>
+    </div>
+
+    <div class="howto-progression">
+      <h3>📊 Full Business Progression</h3>
+      <div class="prog-row"><span class="prog-icon">🧾</span><span class="prog-name">Tax Prep Office</span><span class="prog-cost">$20</span><span class="prog-earn">$0.50/s</span></div>
+      <div class="prog-row"><span class="prog-icon">💼</span><span class="prog-name">Financial Planning Firm</span><span class="prog-cost">$200</span><span class="prog-earn">$3/s</span></div>
+      <div class="prog-row"><span class="prog-icon">📊</span><span class="prog-name">Brokerage Office</span><span class="prog-cost">$1.2K</span><span class="prog-earn">$15/s</span></div>
+      <div class="prog-row"><span class="prog-icon">🏦</span><span class="prog-name">Community Bank</span><span class="prog-cost">$8K</span><span class="prog-earn">$80/s</span></div>
+      <div class="prog-row"><span class="prog-icon">📈</span><span class="prog-name">Hedge Fund</span><span class="prog-cost">$35K</span><span class="prog-earn">$300/s</span></div>
+      <div class="prog-row"><span class="prog-icon">🏢</span><span class="prog-name">Investment Bank</span><span class="prog-cost">$150K</span><span class="prog-earn">$1,200/s</span></div>
+      <div class="prog-row"><span class="prog-icon">🌐</span><span class="prog-name">Global Asset Manager</span><span class="prog-cost">$800K</span><span class="prog-earn">$6,000/s</span></div>
+      <div class="prog-row"><span class="prog-icon">💳</span><span class="prog-name">Payment Network</span><span class="prog-cost">$5M</span><span class="prog-earn">$35,000/s</span></div>
+      <div class="prog-row"><span class="prog-icon">🏛️</span><span class="prog-name">Central Bank</span><span class="prog-cost">$30M</span><span class="prog-earn">$200,000/s</span></div>
+      <div class="prog-row"><span class="prog-icon">🔮</span><span class="prog-name">Quant Trading Firm</span><span class="prog-cost">$200M</span><span class="prog-earn">$1.2M/s</span></div>
+      <div class="prog-row"><span class="prog-icon">🌍</span><span class="prog-name">Sovereign Wealth Fund</span><span class="prog-cost">$2B</span><span class="prog-earn">$8M/s</span></div>
+      <div class="prog-row"><span class="prog-icon">♾️</span><span class="prog-name">Galactic Reserve</span><span class="prog-cost">$20B</span><span class="prog-earn">$60M/s</span></div>
+    </div>
+
+  </div>
+
   <div class="ad-bottom">
     <div>
-      <span class="ad-label">Advertisement</span>
-      <span class="ad-text" id="ad-bot-text">Life insurance solutions for entrepreneurs. Protect what you've built.</span>
+      <span class="ad-label" style="display:block;margin-bottom:2px">Advertisement</span>
+      <span class="ad-text" id="ad-bot-text">Life insurance for entrepreneurs. Protect what you've built.</span>
     </div>
     <a class="ad-cta" href="#" onclick="cycleAd(event)">Get started →</a>
   </div>
 </div>
 
+<!-- Daily bonus modal -->
+<div id="daily-modal" class="daily-modal" style="display:none">
+  <div class="daily-box">
+    <div style="font-size:32px;margin-bottom:8px">🎁</div>
+    <h2>Daily Bonus!</h2>
+    <p>Welcome back! Here's your reward for returning today.</p>
+    <div class="daily-reward" id="daily-reward-amt">+$500</div>
+    <button class="btn btn-green" style="width:100%;padding:10px" onclick="claimDaily()">Claim Bonus</button>
+  </div>
+</div>
+
+<!-- Prestige confirm modal -->
+<div id="prestige-modal" class="prestige-modal" style="display:none">
+  <div class="prestige-box">
+    <div style="font-size:36px;margin-bottom:8px">🏆</div>
+    <h2>Prestige!</h2>
+    <p>Your empire resets to $100 and all firms are lost. In return you earn a permanent compounding income multiplier.</p>
+    <div class="prestige-reward" id="prestige-new-mult"></div>
+    <div class="prestige-warn" id="prestige-warn"></div>
+    <div class="prestige-row">
+      <button class="btn" onclick="closePrestige()">Cancel</button>
+      <button class="btn btn-prestige" onclick="confirmPrestige()">Confirm Prestige</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const BUSINESSES = [
-  { id:0, name:"Lemonade Stand", baseCost:20, baseIncome:0.5, desc:"Your first hustle" },
-  { id:1, name:"Food Truck", baseCost:200, baseIncome:3, desc:"Mobile cuisine" },
-  { id:2, name:"Coffee Shop", baseCost:1200, baseIncome:15, desc:"Caffeine empire" },
-  { id:3, name:"Gym", baseCost:8000, baseIncome:80, desc:"Sweat = money" },
-  { id:4, name:"Tech Startup", baseCost:50000, baseIncome:400, desc:"Disrupt everything" },
-  { id:5, name:"Real Estate", baseCost:300000, baseIncome:2000, desc:"Passive income king" },
+const BUSINESSES=[
+  {id:0,  name:"Tax Prep Office",        icon:"🧾", baseCost:20,         baseIncome:0.5,      desc:"File returns for individuals and small businesses. Simple, steady, and a great first client base."},
+  {id:1,  name:"Financial Planning Firm",icon:"💼", baseCost:200,        baseIncome:3,        desc:"Help clients budget, save, and invest. Recurring advisory fees mean reliable monthly revenue."},
+  {id:2,  name:"Brokerage Office",       icon:"📊", baseCost:1200,       baseIncome:15,       desc:"Execute trades and earn commissions on every transaction. Active markets mean active income."},
+  {id:3,  name:"Community Bank",         icon:"🏦", baseCost:8000,       baseIncome:80,       desc:"Accept deposits, issue loans, and earn the spread. The bread and butter of traditional finance."},
+  {id:4,  name:"Hedge Fund",             icon:"📈", baseCost:35000,      baseIncome:300,      desc:"Pool capital from accredited investors and charge a 2% management fee plus 20% of profits."},
+  {id:5,  name:"Investment Bank",        icon:"🏢", baseCost:150000,     baseIncome:1200,     desc:"Underwrite IPOs, advise on M&A, and earn massive fees on billion-dollar deals."},
+  {id:6,  name:"Global Asset Manager",   icon:"🌐", baseCost:800000,     baseIncome:6000,     desc:"Manage trillions in pension funds, endowments, and ETFs. Every basis point adds up fast."},
+  {id:7,  name:"Payment Network",        icon:"💳", baseCost:5000000,    baseIncome:35000,    desc:"Process millions of transactions per second and clip a fraction of every swipe. It never stops."},
+  {id:8,  name:"Central Bank",           icon:"🏛️", baseCost:30000000,   baseIncome:200000,   desc:"Set interest rates, issue currency, and earn seigniorage. You literally print money."},
+  {id:9,  name:"Quant Trading Firm",     icon:"🔮", baseCost:200000000,  baseIncome:1200000,  desc:"Algorithms execute millions of trades per second, exploiting micro-inefficiencies for massive gain."},
+  {id:10, name:"Sovereign Wealth Fund",  icon:"🌍", baseCost:2000000000, baseIncome:8000000,  desc:"Manage a nation's oil revenues and invest globally. Trillions under management, infinite patience."},
+  {id:11, name:"Galactic Reserve",       icon:"♾️", baseCost:20000000000,baseIncome:60000000, desc:"The intergalactic financial authority. Every economy in the universe pays you a tithe."},
 ];
-const UPGRADES = [
-  { id:0, name:"Better Lemons", bizId:0, cost:80, mult:2, desc:"2× lemonade income", bought:false },
-  { id:1, name:"Food Truck 2.0", bizId:1, cost:800, mult:2, desc:"2× food truck income", bought:false },
-  { id:2, name:"Loyalty Cards", bizId:2, cost:5000, mult:2, desc:"2× coffee income", bought:false },
-  { id:3, name:"Personal Trainer", bizId:3, cost:30000, mult:2, desc:"2× gym income", bought:false },
-  { id:4, name:"AI Integration", bizId:4, cost:150000, mult:3, desc:"3× startup income", bought:false },
-  { id:5, name:"Prime Locations", bizId:5, cost:800000, mult:2, desc:"2× real estate income", bought:false },
+
+const UPGRADES=[
+  {id:0, bizId:0,  name:"E-Filing Software",     cost:80,          mult:2, desc:"Automate tax submissions. Process 2x as many returns with the same staff."},
+  {id:1, bizId:0,  name:"CPA Network",            cost:500,         mult:3, desc:"Partner with certified CPAs to handle complex returns at premium rates."},
+  {id:2, bizId:0,  name:"Franchise License",      cost:5000,        mult:5, desc:"License your brand to other preparers nationwide. Revenue without effort."},
+  {id:3, bizId:1,  name:"Robo-Advisor Platform",  cost:800,         mult:2, desc:"Automate basic portfolio management. Serve 2x as many clients without adding staff."},
+  {id:4, bizId:1,  name:"Fee-Based Model",        cost:5000,        mult:3, desc:"Switch from commissions to flat advisory fees. Predictable, recurring revenue."},
+  {id:5, bizId:1,  name:"Insurance Licensing",    cost:30000,       mult:4, desc:"Add life insurance sales. Every financial plan now includes a product sale."},
+  {id:6, bizId:2,  name:"Options Trading Desk",   cost:5000,        mult:2, desc:"Add derivatives trading. Higher margin products, higher commissions per trade."},
+  {id:7, bizId:2,  name:"Prime Brokerage",        cost:25000,       mult:3, desc:"Service institutional clients with leverage, clearing, and custody. Massive fee pools."},
+  {id:8, bizId:2,  name:"Dark Pool Access",       cost:150000,      mult:4, desc:"Execute large block trades off-exchange. Institutional clients pay a premium."},
+  {id:9, bizId:3,  name:"Online Banking Portal",  cost:30000,       mult:2, desc:"Reduce branch costs and serve customers 24/7 at near-zero marginal cost."},
+  {id:10,bizId:3,  name:"Mortgage Division",      cost:150000,      mult:3, desc:"Issue home loans and sell them into the secondary market for immediate profit."},
+  {id:11,bizId:3,  name:"Credit Card Program",    cost:800000,      mult:4, desc:"Launch a co-branded credit card. Interchange fees and interest stack every month."},
+  {id:12,bizId:4,  name:"Quant Models",           cost:100000,      mult:2, desc:"Algorithmic strategies reduce human error and improve risk-adjusted returns."},
+  {id:13,bizId:4,  name:"Offshore Structure",     cost:500000,      mult:3, desc:"Domicile in the Caymans. Tax efficiency compresses costs and boosts net returns."},
+  {id:14,bizId:4,  name:"Family Office Clients",  cost:3000000,     mult:5, desc:"Ultra-high-net-worth families pay enormous retainers for bespoke service."},
+  {id:15,bizId:5,  name:"SPAC Division",          cost:500000,      mult:3, desc:"Sponsor blank-check companies and earn underwriting fees on every merger."},
+  {id:16,bizId:5,  name:"Distressed Debt Desk",   cost:3000000,     mult:4, desc:"Buy troubled loans at a discount and restructure for outsized returns."},
+  {id:17,bizId:5,  name:"Global M&A Advisory",    cost:20000000,    mult:5, desc:"Advise on cross-border mergers. Fees on a $10B deal run into the hundreds of millions."},
+  {id:18,bizId:6,  name:"Index Fund Empire",      cost:2000000,     mult:2, desc:"Launch passive ETFs. Low fees, enormous AUM, unstoppable inflows."},
+  {id:19,bizId:6,  name:"ESG Premium Tier",       cost:15000000,    mult:3, desc:"Charge higher fees for ESG-screened portfolios. Demand is insatiable."},
+  {id:20,bizId:6,  name:"Alternatives Platform",  cost:100000000,   mult:5, desc:"Add private equity, real estate, and infrastructure funds. Illiquidity premium is massive."},
+  {id:21,bizId:7,  name:"Buy Now Pay Later",      cost:10000000,    mult:2, desc:"Offer BNPL at checkout. Merchants pay fees, consumers pay interest. Win-win for you."},
+  {id:22,bizId:7,  name:"Crypto Rails",           cost:80000000,    mult:4, desc:"Add blockchain settlement. Instant, borderless, and far cheaper than traditional rails."},
+  {id:23,bizId:8,  name:"Quantitative Easing",    cost:100000000,   mult:2, desc:"Purchase assets at scale. Asset prices rise. Your balance sheet expands infinitely."},
+  {id:24,bizId:8,  name:"Reserve Currency Status",cost:500000000,   mult:3, desc:"The world holds your currency as reserves. Demand is structural and permanent."},
+  {id:25,bizId:9,  name:"Co-Location Servers",    cost:1000000000,  mult:3, desc:"Place servers nanoseconds from exchanges. Front-run the market at the speed of light."},
+  {id:26,bizId:9,  name:"Predictive AI Engine",   cost:5000000000,  mult:4, desc:"Train models on every dataset on earth. Your edge is practically a cheat code."},
+  {id:27,bizId:10, name:"Diversified Mandate",    cost:10000000000, mult:3, desc:"Expand beyond bonds into equities, PE, and infrastructure. AUM compounds endlessly."},
+  {id:28,bizId:11, name:"Multiverse Branch",      cost:50000000000, mult:3, desc:"Open branches in parallel universes. Every timeline pays transaction fees."},
 ];
-const ADS = [
+
+const ACHIEVEMENTS=[
+  {id:0, icon:"🧾", name:"First Client",      desc:"Buy your first business",           check:s=>Object.keys(s.owned).length>=1},
+  {id:1, icon:"💰", name:"Thousandaire",      desc:"Earn $1,000 total",                 check:s=>s.totalEarned>=1000},
+  {id:2, icon:"💵", name:"Millionaire",       desc:"Earn $1,000,000 total",             check:s=>s.totalEarned>=1000000},
+  {id:3, icon:"💎", name:"Billionaire",       desc:"Earn $1,000,000,000 total",         check:s=>s.totalEarned>=1000000000},
+  {id:4, icon:"⚡", name:"Upgrade Addict",    desc:"Buy 10 upgrades",                   check:s=>Object.keys(s.upgrades).length>=10},
+  {id:5, icon:"🌐", name:"Diversified",       desc:"Own all 12 firm types",             check:s=>Object.keys(s.owned).length>=12},
+  {id:6, icon:"👔", name:"Big Employer",      desc:"Hire 20 staff total",               check:s=>Object.values(s.employees||{}).reduce((a,b)=>a+b,0)>=20},
+  {id:7, icon:"🏆", name:"Prestigious",       desc:"Reach Prestige level 1",            check:s=>s.prestige>=1},
+  {id:8, icon:"👑", name:"Dynasty",           desc:"Reach Prestige level 5",            check:s=>s.prestige>=5},
+  {id:9, icon:"♾️", name:"Galactic",          desc:"Own a Galactic Reserve",            check:s=>s.owned[11]>=1},
+  {id:10,icon:"🌪️", name:"Market Survivor",  desc:"Live through 10 market events",     check:s=>s.eventsLived>=10},
+  {id:11,icon:"📅", name:"Streak",            desc:"Claim 7 daily bonuses",             check:s=>s.dailyClaims>=7},
+];
+
+const MARKET_EVENTS=[
+  {msg:"📈 Bull market! All income +100% for 30s",        mult:2,    dur:30},
+  {msg:"🚀 Rate cut! All income +150% for 20s",           mult:2.5,  dur:20},
+  {msg:"🔥 Meme stock mania! All income +300% for 15s",   mult:4,    dur:15},
+  {msg:"🌧️ Recession. Income -30% for 25s",              mult:0.7,  dur:25},
+  {msg:"💸 Tax break! All income +75% for 30s",           mult:1.75, dur:30},
+  {msg:"🤝 Trade deal! All income +200% for 20s",         mult:3,    dur:20},
+  {msg:"⚡ Liquidity crisis. Income -20% for 20s",        mult:0.8,  dur:20},
+];
+
+const ADS=[
   "Smart financial planning for business owners — talk to an advisor today.",
-  "Life insurance solutions for entrepreneurs. Protect what you've built.",
+  "Life insurance for entrepreneurs. Protect what you've built.",
   "401(k) plans for small businesses. Ask a retirement plan expert.",
   "Need funding? Connect with a financial advisor near you.",
-  "Retiring someday? Start your plan now.",
+  "Retiring someday? Start your plan now. 267-798-9535",
 ];
-let adIdx = 0;
-function cycleAd(e) { e.preventDefault(); adIdx=(adIdx+1)%ADS.length; document.getElementById('ad-top-text').textContent=ADS[adIdx]; document.getElementById('ad-bot-text').textContent=ADS[(adIdx+1)%ADS.length]; }
 
-let state = { cash:100, day:1, prestige:0, owned:{}, upgrades:{}, mult:1 };
-let ticks=0, totalEarned=0;
+function prestigeCost(p){return 1000000*Math.pow(5,p);}
+function prestigeMult(p){return Math.pow(2,p);}
 
-function getIncome(biz) {
-  const c=state.owned[biz.id]||0; if(!c) return 0;
-  let m=1; UPGRADES.forEach(u=>{ if(u.bizId===biz.id&&state.upgrades[u.id]) m*=u.mult; });
-  return biz.baseIncome*c*m*state.mult;
+let adIdx=0;
+function cycleAd(e){
+  e.preventDefault();
+  adIdx=(adIdx+1)%ADS.length;
+  document.getElementById('ad-top-text').textContent=ADS[adIdx];
+  document.getElementById('ad-bot-text').textContent=ADS[(adIdx+1)%ADS.length];
 }
-function totalRPS() { return BUSINESSES.reduce((s,b)=>s+getIncome(b),0); }
-function getCost(biz) { return Math.floor(biz.baseCost*Math.pow(1.15,state.owned[biz.id]||0)); }
-function fmt(n) {
-  if(n>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
-  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
-  if(n>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
-  return '$'+Math.floor(n);
+
+let state={cash:100,day:1,prestige:0,owned:{},upgrades:{},employees:{},totalEarned:0,eventsLived:0,dailyClaims:0,achievements:{}};
+let marketMult=1,marketTimer=0,ticks=0,currentUser=null;
+const SK='finempire_v1';
+
+function saveLocal(){try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}}
+function loadLocal(){try{const d=localStorage.getItem(SK);if(d)state={...state,...JSON.parse(d)};}catch(e){}}
+
+function signIn(){
+  const name=prompt("Enter your display name for the leaderboard:");
+  if(!name||!name.trim())return;
+  currentUser={name:name.trim(),id:'u_'+Math.random().toString(36).slice(2)};
+  updateSignInBar();saveToLeaderboard();log('Signed in as '+currentUser.name);
 }
-function log(msg) {
+function signOut(){currentUser=null;updateSignInBar();}
+function updateSignInBar(){
+  const bar=document.getElementById('sign-in-bar');
+  if(currentUser){
+    bar.innerHTML=`<span class="sign-in-text" style="color:var(--green)">Signed in as <strong>${currentUser.name}</strong></span><button class="btn btn-sm" onclick="signOut()">Sign out</button>`;
+  } else {
+    bar.innerHTML=`<span class="sign-in-text">Sign in to save progress and appear on the leaderboard</span><button class="btn-google" onclick="signIn()"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.7 0 6.7 5.5 2.7 13.5l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.5 28.5c-.5-1.5-.8-3.1-.8-4.8s.3-3.3.8-4.8l-7.8-6C1 16.1 0 19.9 0 24s1 7.9 2.7 11.1l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.2-7.6 2.2-6.2 0-11.5-4.2-13.4-9.8l-7.8 6C6.7 42.5 14.7 48 24 48z"/></svg>Sign in</button>`;
+  }
+}
+
+function saveToLeaderboard(){
+  if(!currentUser)return;
+  try{
+    const lb=getLB();
+    const idx=lb.findIndex(e=>e.id===currentUser.id);
+    const entry={id:currentUser.id,name:currentUser.name,worth:Math.floor(state.totalEarned),prestige:state.prestige};
+    if(idx>=0)lb[idx]=entry;else lb.push(entry);
+    lb.sort((a,b)=>b.worth-a.worth);
+    localStorage.setItem('finempire_lb',JSON.stringify(lb.slice(0,20)));
+  }catch(e){}
+}
+function getLB(){
+  try{
+    const d=localStorage.getItem('finempire_lb');
+    const real=d?JSON.parse(d):[];
+    const demo=[
+      {id:'d1',name:'WallStreetWolf',worth:50000000000,prestige:8},
+      {id:'d2',name:'CompoundKing',worth:5000000000,prestige:5},
+      {id:'d3',name:'AlphaSeeker',worth:500000000,prestige:3},
+      {id:'d4',name:'RetirementRich',worth:50000000,prestige:1},
+      {id:'d5',name:'FirstTimeFiler',worth:500000,prestige:0},
+    ];
+    demo.forEach(d=>{if(!real.find(r=>r.id===d.id))real.push(d);});
+    real.sort((a,b)=>b.worth-a.worth);
+    return real;
+  }catch(e){return[];}
+}
+
+function getIncome(biz){
+  const c=state.owned[biz.id]||0;if(!c)return 0;
+  let m=1;
+  UPGRADES.forEach(u=>{if(u.bizId===biz.id&&state.upgrades[u.id])m*=u.mult;});
+  const emp=(state.employees[biz.id]||0)*0.1;
+  return biz.baseIncome*c*(1+emp)*m*prestigeMult(state.prestige)*marketMult;
+}
+function totalRPS(){return BUSINESSES.reduce((s,b)=>s+getIncome(b),0);}
+function getCost(biz){return Math.floor(biz.baseCost*Math.pow(1.15,state.owned[biz.id]||0));}
+function getEmpCost(id){return Math.floor(500*Math.pow(1.3,state.employees[id]||0));}
+function getUpgradeCount(bizId){return UPGRADES.filter(u=>u.bizId===bizId&&state.upgrades[u.id]).length;}
+
+function fmt(n){
+  if(n>=1e15)return'$'+(n/1e15).toFixed(2)+'Qa';
+  if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';
+  if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3)return'$'+(n/1e3).toFixed(1)+'K';
+  return'$'+Math.floor(n);
+}
+
+function log(msg){
   const el=document.getElementById('log');
-  const d=document.createElement('div'); d.className='log-entry';
+  const d=document.createElement('div');d.className='log-entry';
   d.textContent='Day '+state.day+': '+msg;
   el.insertBefore(d,el.firstChild);
-  if(el.children.length>40) el.removeChild(el.lastChild);
+  if(el.children.length>60)el.removeChild(el.lastChild);
 }
-function buyBiz(id) {
+
+function spawnFloat(el,amount){
+  const rect=el.getBoundingClientRect();
+  const f=document.createElement('div');f.className='float-num';
+  f.textContent='+'+fmt(amount);
+  f.style.left=(rect.left+rect.width/2-20)+'px';
+  f.style.top=(rect.top+window.scrollY-10)+'px';
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),900);
+}
+
+function buyBiz(id){
   const biz=BUSINESSES[id],cost=getCost(biz);
-  if(state.cash<cost) return;
-  state.cash-=cost; state.owned[id]=(state.owned[id]||0)+1;
-  log('Bought '+biz.name+' #'+state.owned[id]); render();
+  if(state.cash<cost)return;
+  state.cash-=cost;state.owned[id]=(state.owned[id]||0)+1;
+  log('Acquired '+biz.name+' #'+state.owned[id]);
+  checkAchievements();saveLocal();render();
 }
-function buyUpgrade(id) {
+function buyUpgrade(id){
   const u=UPGRADES[id];
-  if(state.cash<u.cost||state.upgrades[id]) return;
-  state.cash-=u.cost; state.upgrades[id]=true;
-  log('Upgraded: '+u.name); render();
+  if(state.upgrades[id]||state.cash<u.cost)return;
+  state.cash-=u.cost;state.upgrades[id]=true;
+  log('Upgrade: '+u.name);
+  checkAchievements();saveLocal();render();renderUpgrades();
 }
-function prestige() {
-  if(totalEarned<1000000) return;
-  state.prestige++; state.mult=1+state.prestige*0.5;
-  state.cash=100; state.owned={}; state.upgrades={}; totalEarned=0; state.day=1;
-  log('Prestige! Income ×'+state.mult.toFixed(1)); render();
+function buyEmployee(bizId){
+  const cost=getEmpCost(bizId);
+  if(state.cash<cost)return;
+  state.cash-=cost;state.employees[bizId]=(state.employees[bizId]||0)+1;
+  log('Hired analyst for '+BUSINESSES[bizId].name);
+  checkAchievements();saveLocal();render();
 }
-function render() {
-  document.getElementById('cash').textContent=fmt(state.cash);
-  document.getElementById('rps').textContent=fmt(totalRPS());
-  document.getElementById('day').textContent=state.day;
-  document.getElementById('prestige').textContent=state.prestige;
-  const bl=document.getElementById('biz-list'); bl.innerHTML='';
+
+function openPrestige(){
+  const cost=prestigeCost(state.prestige);
+  if(state.totalEarned<cost)return;
+  const next=state.prestige+1;
+  document.getElementById('prestige-new-mult').textContent=prestigeMult(next)+'x all income permanently';
+  document.getElementById('prestige-warn').textContent='Next prestige after this will cost '+fmt(prestigeCost(next));
+  document.getElementById('prestige-modal').style.display='flex';
+}
+function closePrestige(){document.getElementById('prestige-modal').style.display='none';}
+function confirmPrestige(){
+  state.prestige++;
+  state.cash=100;state.owned={};state.upgrades={};state.employees={};state.totalEarned=0;state.day=1;
+  closePrestige();
+  log('Prestige '+state.prestige+'! Earning '+prestigeMult(state.prestige)+'x. Next costs '+fmt(prestigeCost(state.prestige)));
+  checkAchievements();saveLocal();render();
+}
+
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a=>{
+    if(!state.achievements[a.id]&&a.check(state)){
+      state.achievements[a.id]=true;showAchievement(a);
+    }
+  });
+}
+function showAchievement(a){
+  const t=document.createElement('div');t.className='achievement-toast';
+  t.innerHTML=`<div class="achievement-title">Achievement Unlocked</div><div style="font-size:14px">${a.icon} ${a.name}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${a.desc}</div>`;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+
+function triggerMarketEvent(){
+  const ev=MARKET_EVENTS[Math.floor(Math.random()*MARKET_EVENTS.length)];
+  marketMult=ev.mult;marketTimer=ev.dur*10;
+  state.eventsLived=(state.eventsLived||0)+1;
+  const banner=document.getElementById('event-banner');
+  banner.textContent=ev.msg;banner.style.display='block';
+  log('Market event: '+ev.msg);
+  setTimeout(()=>{banner.style.display='none';},ev.dur*1000);
+}
+
+function shareGame(){
+  const text='I built a '+fmt(state.totalEarned)+' finance empire at Prestige '+state.prestige+'! Play free: https://fungames4you.github.io';
+  if(navigator.share){navigator.share({title:'Finance Empire',text,url:'https://fungames4you.github.io'});}
+  else{navigator.clipboard.writeText(text).then(()=>alert('Copied! Paste anywhere to share.'));}
+}
+
+function checkDaily(){
+  const last=localStorage.getItem('finempire_daily');
+  const today=new Date().toDateString();
+  if(last===today)return;
+  const bonus=Math.max(100,Math.floor(totalRPS()*60));
+  document.getElementById('daily-reward-amt').textContent='+'+fmt(bonus);
+  document.getElementById('daily-modal').style.display='flex';
+  document.getElementById('daily-modal').dataset.bonus=bonus;
+}
+function claimDaily(){
+  const bonus=parseFloat(document.getElementById('daily-modal').dataset.bonus)||100;
+  state.cash+=bonus;state.totalEarned+=bonus;
+  state.dailyClaims=(state.dailyClaims||0)+1;
+  localStorage.setItem('finempire_daily',new Date().toDateString());
+  document.getElementById('daily-modal').style.display='none';
+  log('Daily bonus: '+fmt(bonus));
+  saveLocal();render();
+}
+
+function switchTab(tab){
+  const tabs=['game','upgrades','leaderboard','achievements','howto'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===tab));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='leaderboard')renderLeaderboard();
+  if(tab==='achievements')renderAchievements();
+  if(tab==='upgrades')renderUpgrades();
+}
+
+function renderLeaderboard(){
+  const lb=getLB();
+  if(currentUser)saveToLeaderboard();
+  const myId=currentUser?currentUser.id:null;
+  const el=document.getElementById('lb-list');el.innerHTML='';
+  lb.forEach((e,i)=>{
+    const isMe=e.id===myId;
+    const d=document.createElement('div');d.className='lb-row'+(isMe?' lb-you':'');
+    d.innerHTML=`<span class="lb-rank ${i<3?'gold':''}">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</span>
+    <span class="lb-name">${e.name}${e.prestige?' <span class="prestige-tier">P'+e.prestige+'</span>':''}${isMe?' <span style="font-size:10px;color:var(--green)">(you)</span>':''}</span>
+    <span class="lb-val">${fmt(e.worth)}</span>`;
+    el.appendChild(d);
+  });
+}
+
+function renderAchievements(){
+  const el=document.getElementById('ach-grid');el.innerHTML='';
+  ACHIEVEMENTS.forEach(a=>{
+    const d=document.createElement('div');d.className='ach-card'+(state.achievements[a.id]?' unlocked':'');
+    d.innerHTML=`<div class="ach-icon">${state.achievements[a.id]?a.icon:'🔒'}</div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderUpgrades(){
+  const el=document.getElementById('upgrade-list-full');el.innerHTML='';
+  let shown=0;
+  UPGRADES.forEach(u=>{
+    const owned=state.owned[u.bizId]||0;
+    const biz=BUSINESSES[u.bizId];
+    const bought=state.upgrades[u.id];
+    if(!owned&&!bought)return;
+    shown++;
+    const canBuy=!bought&&state.cash>=u.cost;
+    const shortfall=u.cost-state.cash;
+    const d=document.createElement('div');d.className='biz-item';
+    d.innerHTML=`<div class="biz-header">
+      <span style="font-size:18px;margin-right:8px">${biz.icon}</span>
+      <div class="biz-meta">
+        <div class="biz-name">${u.name} <span style="font-size:10px;color:var(--muted)">(${biz.name})</span></div>
+        <div class="biz-detail">${u.desc}</div>
+        <div class="biz-desc" style="margin-top:3px">Multiplies income by <span style="color:var(--green)">${u.mult}x</span></div>
+        ${!bought&&shortfall>0?`<div class="unlock-hint">Need ${fmt(shortfall)} more to unlock</div>`:''}
+      </div>
+      <div class="biz-right" style="min-width:80px">
+        ${bought
+          ?'<span style="color:var(--green);font-size:12px">Owned</span>'
+          :`<div class="cost">${fmt(u.cost)}</div>
+           <button class="btn btn-sm ${canBuy?'btn-green':''}" onclick="buyUpgrade(${u.id})" ${!canBuy?'disabled':''}>Buy</button>`
+        }
+      </div>
+    </div>`;
+    el.appendChild(d);
+  });
+  if(!shown)el.innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px 0">Acquire businesses first to unlock upgrades.</div>';
+}
+
+// Full DOM rebuild — only on buy/hire/prestige
+function render(){
+  updateStats();
+  const maxIncome=Math.max(1,...BUSINESSES.map(b=>getIncome(b)));
+  const bl=document.getElementById('biz-list');bl.innerHTML='';
   BUSINESSES.forEach(biz=>{
     const owned=state.owned[biz.id]||0,cost=getCost(biz),inc=getIncome(biz);
-    const d=document.createElement('div'); d.className='biz-item';
-    d.innerHTML=`<div class="biz-left">
-      <div class="biz-name">${biz.name}${owned?'<span class="badge">×'+owned+'</span>':''}</div>
-      <div class="biz-desc">${biz.desc}</div>
-      ${inc?'<div class="biz-income">+'+fmt(inc)+'/s</div>':''}
-    </div>
-    <div class="biz-right">
-      <div class="cost">${fmt(cost)}</div>
-      <button class="btn" onclick="buyBiz(${biz.id})" ${state.cash<cost?'disabled':''}>Buy</button>
+    const upgCount=getUpgradeCount(biz.id);
+    const totalUpg=UPGRADES.filter(u=>u.bizId===biz.id).length;
+    const empCount=state.employees[biz.id]||0;
+    const empCost=getEmpCost(biz.id);
+    const pct=Math.min(100,Math.round(inc/maxIncome*100));
+    const shortfall=cost-state.cash;
+    const d=document.createElement('div');d.className='biz-item';d.id='biz-'+biz.id;
+    d.innerHTML=`<div class="biz-header">
+      <span class="biz-icon">${biz.icon}</span>
+      <div class="biz-meta">
+        <div class="biz-name" id="bn${biz.id}">${biz.name}
+          ${owned?`<span class="badge">x${owned}</span>`:''}
+          ${upgCount?`<span class="badge-upg">x${upgCount}/${totalUpg}</span>`:''}
+          ${empCount?`<span class="badge-emp">x${empCount}</span>`:''}
+          ${marketMult!==1?`<span class="market-badge ${marketMult<1?'bad':''}">${marketMult>1?'+':''}${Math.round((marketMult-1)*100)}%</span>`:''}
+        </div>
+        <div class="biz-desc">${biz.desc}</div>
+        <div class="biz-desc" style="margin-top:2px;color:var(--muted)">Base: $${biz.baseIncome}/sec · Cost: ${fmt(cost)}</div>
+        ${shortfall>0?`<div class="unlock-hint" id="uh${biz.id}">Need ${fmt(shortfall)} more</div>`:`<div class="unlock-hint" id="uh${biz.id}" style="display:none"></div>`}
+        <div class="biz-income-row" id="ir${biz.id}" style="${inc?'':'display:none'}">
+          <span class="biz-income" id="bi${biz.id}">+${fmt(inc)}/s</span>
+          <div class="income-bar"><div class="income-fill" id="bb${biz.id}" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+      <div class="biz-right">
+        <button class="btn btn-sm" id="bbuy${biz.id}" onclick="buyBiz(${biz.id})" ${state.cash<cost?'disabled':''}>Buy</button>
+        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="margin-top:4px;display:${owned?'block':'none'}" onclick="buyEmployee(${biz.id})" ${state.cash<empCost?'disabled':''}>Hire<br><span style="font-size:9px" id="bhirecost${biz.id}">${fmt(empCost)}</span></button>
+      </div>
     </div>`;
     bl.appendChild(d);
   });
-  const ul=document.getElementById('upgrade-list'); ul.innerHTML='';
-  let shown=0;
-  UPGRADES.forEach(u=>{
-    if(state.upgrades[u.id]||!(state.owned[u.bizId]||0)) return;
-    shown++;
-    const d=document.createElement('div'); d.className='biz-item';
-    d.innerHTML=`<div class="biz-left">
-      <div class="biz-name">${u.name}</div>
-      <div class="biz-desc">${u.desc}</div>
-    </div>
-    <div class="biz-right">
-      <div class="cost">${fmt(u.cost)}</div>
-      <button class="btn" onclick="buyUpgrade(${u.id})" ${state.cash<u.cost?'disabled':''}>Buy</button>
-    </div>`;
-    ul.appendChild(d);
-  });
-  if(!shown) ul.innerHTML='<div style="font-size:12px;color:var(--muted)">Buy businesses to unlock upgrades.</div>';
-  document.getElementById('prestige-btn').style.display=totalEarned>=1000000?'block':'none';
 }
-function tick() {
+
+// Per-tick lightweight update — never touches button DOM structure
+function updateStats(){
+  const pCost=prestigeCost(state.prestige);
+  document.getElementById('cash').textContent=fmt(state.cash);
+  document.getElementById('rps').textContent=fmt(totalRPS());
+  document.getElementById('networth').textContent=fmt(state.totalEarned);
+  document.getElementById('day').textContent=state.day;
+  document.getElementById('prestige-stat').textContent=state.prestige+' ('+prestigeMult(state.prestige)+'x)';
+  const pb=document.getElementById('prestige-btn');
+  pb.style.display=state.totalEarned>=pCost?'flex':'none';
+  const maxIncome=Math.max(1,...BUSINESSES.map(b=>getIncome(b)));
+  BUSINESSES.forEach(biz=>{
+    const cost=getCost(biz),inc=getIncome(biz),empCost=getEmpCost(biz.id);
+    const pct=Math.min(100,Math.round(inc/maxIncome*100));
+    const shortfall=cost-state.cash;
+    const buyBtn=document.getElementById('bbuy'+biz.id);
+    const hireBtn=document.getElementById('bhire'+biz.id);
+    const hireCostEl=document.getElementById('bhirecost'+biz.id);
+    const incEl=document.getElementById('bi'+biz.id);
+    const incRow=document.getElementById('ir'+biz.id);
+    const barEl=document.getElementById('bb'+biz.id);
+    const uhEl=document.getElementById('uh'+biz.id);
+    if(buyBtn)buyBtn.disabled=state.cash<cost;
+    if(hireBtn)hireBtn.disabled=state.cash<empCost;
+    if(hireCostEl)hireCostEl.textContent=fmt(empCost);
+    if(incEl)incEl.textContent='+'+fmt(inc)+'/s';
+    if(incRow)incRow.style.display=inc?'':'none';
+    if(barEl)barEl.style.width=pct+'%';
+    if(uhEl){
+      if(shortfall>0){uhEl.textContent='Need '+fmt(shortfall)+' more';uhEl.style.display='';}
+      else uhEl.style.display='none';
+    }
+  });
+}
+
+function tick(){
   ticks++;
   const earned=totalRPS()/10;
-  state.cash+=earned; totalEarned+=earned;
-  if(ticks%100===0) {
+  state.cash+=earned;state.totalEarned+=earned;
+  if(marketTimer>0){marketTimer--;if(marketTimer===0){marketMult=1;render();}}
+  if(ticks%100===0){
     state.day++;
-    const t=document.getElementById('ticker');
-    if(totalRPS()>0){ t.textContent='+ '+fmt(totalRPS()*10)+' earned today'; setTimeout(()=>t.textContent='',2000); }
+    const rps=totalRPS();
+    if(rps>0){
+      const t=document.getElementById('ticker');
+      t.textContent='+'+fmt(rps*10)+' earned today';
+      setTimeout(()=>{t.textContent='';},2000);
+    }
+    BUSINESSES.forEach(biz=>{
+      const inc=getIncome(biz);
+      if(inc>0){const el=document.getElementById('biz-'+biz.id);if(el)spawnFloat(el,inc*10);}
+    });
+    checkAchievements();
+    if(currentUser&&state.day%5===0)saveToLeaderboard();
+    saveLocal();
   }
-  if(ticks%300===0){ adIdx=(adIdx+1)%ADS.length; document.getElementById('ad-top-text').textContent=ADS[adIdx]; document.getElementById('ad-bot-text').textContent=ADS[(adIdx+1)%ADS.length]; }
-  render();
+  if(ticks%300===0){
+    adIdx=(adIdx+1)%ADS.length;
+    document.getElementById('ad-top-text').textContent=ADS[adIdx];
+    document.getElementById('ad-bot-text').textContent=ADS[(adIdx+1)%ADS.length];
+  }
+  if(ticks%1500===0&&Math.random()<.5)triggerMarketEvent();
+  updateStats();
 }
+
+loadLocal();
 render();
-log('Started with $100. Buy your first business!');
+log('Welcome to Finance Empire! Start by opening a Tax Prep Office for $20.');
+checkAchievements();
+setTimeout(checkDaily,1500);
 setInterval(tick,100);
 </script>
 </body>
