@@ -321,13 +321,16 @@ header h1{font-size:15px;font-weight:600;}
     <div class="howto-card" style="margin-bottom:10px;">
       <div class="howto-card-icon">🏆</div>
       <h3>Prestige — The Reset That Compounds</h3>
-      <p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;">When the Prestige button lights up in the header, you can reset your empire for a permanent income multiplier. Every prestige doubles your earnings — and each one costs 5x more to unlock. The further you go, the faster each new run becomes.</p>
+      <p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:6px;">The Prestige button lights up in the header when your <strong style="color:var(--text)">Net Worth</strong> (the stat bar, 3rd tile) reaches the threshold for your current level. Net Worth is your all-time total earnings — not your current cash.</p>
+<p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;">When you prestige, your cash and firms reset to zero — but you earn a permanent income multiplier that doubles with every prestige. Each run gets faster than the last.</p>
       <table class="prestige-table">
-        <tr><td class="pt-level">Prestige 0</td><td>Normal income</td><td class="pt-cost">Need $1M earned</td><td class="pt-mult">1x</td></tr>
-        <tr><td class="pt-level">Prestige 1</td><td>Double income</td><td class="pt-cost">Need $5M earned</td><td class="pt-mult">2x</td></tr>
-        <tr><td class="pt-level">Prestige 2</td><td>Quadruple income</td><td class="pt-cost">Need $25M earned</td><td class="pt-mult">4x</td></tr>
-        <tr><td class="pt-level">Prestige 3</td><td>8x income</td><td class="pt-cost">Need $125M earned</td><td class="pt-mult">8x</td></tr>
-        <tr><td class="pt-level">Prestige 5</td><td>32x income</td><td class="pt-cost">Need $3.1B earned</td><td class="pt-mult">32x</td></tr>
+        <tr style="font-size:10px;color:var(--muted)"><td>Level</td><td>Multiplier</td><td>Button lights up when Net Worth reaches</td><td>Next cost</td></tr>
+        <tr><td class="pt-level">Current (P0)</td><td class="pt-mult">1x</td><td class="pt-cost">$1,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">unlock now</td></tr>
+        <tr><td class="pt-level">After P1</td><td class="pt-mult">2x</td><td class="pt-cost">$5,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
+        <tr><td class="pt-level">After P2</td><td class="pt-mult">4x</td><td class="pt-cost">$25,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
+        <tr><td class="pt-level">After P3</td><td class="pt-mult">8x</td><td class="pt-cost">$125,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
+        <tr><td class="pt-level">After P4</td><td class="pt-mult">16x</td><td class="pt-cost">$625,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
+        <tr><td class="pt-level">After P5</td><td class="pt-mult">32x</td><td class="pt-cost">$3,125,000,000 Net Worth</td><td style="color:var(--muted);font-size:11px">next run</td></tr>
       </table>
     </div>
 
@@ -755,6 +758,32 @@ function buyBizBulk(id){
   checkAchievements();saveLocal();render();
 }
 
+// Bulk hire helpers
+function empBulkCost(bizId, qty){
+  let total=0, owned=state.employees[bizId]||0;
+  for(let i=0;i<qty;i++) total+=Math.floor(500*Math.pow(1.3,owned+i));
+  return total;
+}
+function calcMaxHire(bizId){
+  let owned=state.employees[bizId]||0, cash=state.cash, count=0;
+  while(true){
+    const c=Math.floor(500*Math.pow(1.3,owned+count));
+    if(cash<c||count>999)break;
+    cash-=c; count++;
+  }
+  return count;
+}
+function hireEmployeeBulk(bizId){
+  const qty=bulkQty===0?calcMaxHire(bizId):bulkQty;
+  if(qty<=0)return;
+  const total=empBulkCost(bizId,qty);
+  if(state.cash<total)return;
+  state.cash-=total;
+  state.employees[bizId]=(state.employees[bizId]||0)+qty;
+  log('Hired '+qty+'x analyst for '+BUSINESSES[bizId].name+' — '+fmt(total));
+  checkAchievements();saveLocal();render();
+}
+
 // Full DOM rebuild — only on buy/hire/prestige
 function render(){
   updateStats();
@@ -768,6 +797,12 @@ function render(){
     const empCost=getEmpCost(biz.id);
     const pct=Math.min(100,Math.round(inc/maxIncome*100));
     const shortfall=cost-state.cash;
+    const hireMaxQty=calcMaxHire(biz.id);
+    const hireEffQty=bulkQty===0?hireMaxQty:bulkQty;
+    const hireBulkTotal=empBulkCost(biz.id,hireEffQty);
+    const hireAffordBulk=hireEffQty>0&&state.cash>=hireBulkTotal;
+    const hireLabel=bulkQty===0?'Max ('+hireMaxQty+'x)':bulkQty+'x';
+    const hireCostFmt=hireEffQty>0?fmt(hireBulkTotal):'Need more cash';
     const maxQty=calcMax(biz);
     const effectiveQty=bulkQty===0?maxQty:bulkQty;
     const bCost=bulkCost(biz,effectiveQty);
@@ -797,7 +832,10 @@ function render(){
           <span id="bbuy-label${biz.id}">${bulkLabel}</span><br>
           <span style="font-size:9px;opacity:.8" id="bbuy-cost${biz.id}">${bulkCostFmt}</span>
         </button>
-        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="display:${owned?'block':'none'};width:100%" onclick="buyEmployee(${biz.id})" ${state.cash<empCost?'disabled':''}>Hire<br><span style="font-size:9px" id="bhirecost${biz.id}">${fmt(empCost)}</span></button>
+        <button class="btn btn-sm btn-green" id="bhire${biz.id}" style="display:${owned?'block':'none'};width:100%" onclick="hireEmployeeBulk(${biz.id})" ${hireAffordBulk?'':'disabled'}>
+          <span id="bhire-label${biz.id}">${hireLabel}</span><br>
+          <span style="font-size:9px" id="bhirecost${biz.id}">${hireCostFmt}</span>
+        </button>
       </div>
     </div>`;
     bl.appendChild(d);
@@ -819,6 +857,12 @@ function updateStats(){
     const cost=getCost(biz),inc=getIncome(biz),empCost=getEmpCost(biz.id);
     const pct=Math.min(100,Math.round(inc/maxIncome*100));
     const shortfall=cost-state.cash;
+    const hireMaxQty=calcMaxHire(biz.id);
+    const hireEffQty=bulkQty===0?hireMaxQty:bulkQty;
+    const hireBulkTotal=empBulkCost(biz.id,hireEffQty);
+    const hireAffordBulk=hireEffQty>0&&state.cash>=hireBulkTotal;
+    const hireLabel=bulkQty===0?'Max ('+hireMaxQty+'x)':bulkQty+'x';
+    const hireCostFmt=hireEffQty>0?fmt(hireBulkTotal):'Need more cash';
     const maxQty=calcMax(biz);
     const effectiveQty=bulkQty===0?maxQty:bulkQty;
     const bCost=bulkCost(biz,effectiveQty);
@@ -835,8 +879,16 @@ function updateStats(){
     if(buyBtn)buyBtn.disabled=!canAffordBulk;
     if(buyLabel)buyLabel.textContent=bulkQty===0?'Max ('+maxQty+'x)':bulkQty+'x';
     if(buyCostEl)buyCostEl.textContent=effectiveQty>0?fmt(bCost):'Need more cash';
-    if(hireBtn)hireBtn.disabled=state.cash<empCost;
-    if(hireCostEl)hireCostEl.textContent=fmt(empCost);
+    const _hMax=calcMaxHire(biz.id);
+    const _hEff=bulkQty===0?_hMax:bulkQty;
+    const _hTotal=empBulkCost(biz.id,_hEff);
+    const _hAfford=_hEff>0&&state.cash>=_hTotal;
+    const _hLabelUpd=bulkQty===0?'Max ('+_hMax+'x)':bulkQty+'x';
+    const _hCostUpd=_hEff>0?fmt(_hTotal):'Need more cash';
+    const hireLabel2=document.getElementById('bhire-label'+biz.id);
+    if(hireBtn)hireBtn.disabled=!_hAfford;
+    if(hireLabel2)hireLabel2.textContent=_hLabelUpd;
+    if(hireCostEl)hireCostEl.textContent=_hCostUpd;
     if(incEl)incEl.textContent='+'+fmt(inc)+'/s';
     if(incRow)incRow.style.display=inc?'':'none';
     if(barEl)barEl.style.width=pct+'%';
